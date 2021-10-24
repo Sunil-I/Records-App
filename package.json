@@ -1,0 +1,28 @@
+{
+  "name": "com519-assessment",
+  "version": "1.0.0",
+  "description": "create, test, and deploy, a proof of concept data-driven full stack web-application",
+  "main": "index.js",
+  "scripts": {
+    "test": "node .",
+    "lint": "prettier --write *.js */*.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Sunil-I/COM519-Assessment.git"
+  },
+  "author": "Sunil Islam",
+  "license": "UNLICENSED",
+  "bugs": {
+    "url": "https://github.com/Sunil-I/COM519-Assessment/issues"
+  },
+  "homepage": "https://github.com/Sunil-I/COM519-Assessment#readme",
+  "dependencies": {
+    "bcrypt": "^5.0.1",
+    "dotenv": "^10.0.0",
+    "ejs": "^3.1.6",
+    "express": "^4.17.1",
+    "mongoose": "^6.0.12",
+    "winston": "^3.3.3"
+  }
+}
