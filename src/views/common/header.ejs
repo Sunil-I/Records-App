@@ -1,0 +1,23 @@
+<header>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <a class="navbar-brand" href="/"> Records App </a>
+      <div class="navbar">
+        <div class="navbar-nav">
+          <a class="nav-link active" href="/">
+            Home <span class="sr-only">(current)</span>
+          </a>
+
+          <% if(user.name) { %>
+           <a class="nav-link" href="accounts">Accounts</a>
+           <a class="nav-link" href="transactions"> Transactions</a>
+           <a class="nav-link" href="profile"> Profile</a>
+           <a class="nav-link" href="logout" > <%= user.email %> (Logout) </a> <%
+          }%> <% if(!user.name) { %>
+          <a class="nav-link" href="login"> Login </a>
+          <a class="nav-link" href="register"> Register </a>
+          <% } %>
+        </div>
+      </div>
+    </nav>
+  </header>
+  
