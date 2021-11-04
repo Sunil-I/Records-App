@@ -1,18 +1,21 @@
-// define express
+// define express package
 const express = require("express");
 const app = express();
-// define sentry
+// define sentry package
 const sentry = require("@sentry/node");
+// define session packages
+const session = require("express-session");
+const MongoStore = require("connect-mongo");
 // define environment values
 const { PORT, BASE_URL } = process.env;
 // initialization functions
 const init = require("../lib/Initialization");
-// get controllers
+// define controllers
 const userController = require("./controllers/userController");
 const homeController = require("./controllers/homeController");
-// sentry logging
+// enable sentry logging for production only
 if ((NODE_ENV = "production")) app.use(sentry.Handlers.requestHandler());
-// set hide express is running
+// hide express is running from scrapers
 app.use((req, res, next) => {
   res.setHeader("X-Powered-By", "<3");
   next();
@@ -24,14 +27,30 @@ app.set("views", __dirname + "/views");
 // allow the use of req.body with JSON post + html forms
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
 // handle invalid JSON
 app.use(init.jsonParseHandler);
+
+// setup session for 12 hours
+app.use(
+  session({
+    secret: process.env.SALT,
+    saveUninitialized: false,
+    resave: true,
+    cookie: { maxAge: 43200000 },
+    store: MongoStore.create({ mongoUrl: process.env.MONGODB_CONNECTION_URL }),
+  })
+);
+
 // routes
-app.get("/", homeController.getHomeView)
+
+// home page
+app.get("/", homeController.getHomeView);
+// register
 app.post("/register", userController.create);
+// login
 app.get("/login", userController.getLoginView);
 app.post("/login", userController.login);
+
 
 // bind to port and run functions
 app.listen(PORT, "127.0.0.1", () => {
