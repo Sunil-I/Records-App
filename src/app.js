@@ -29,7 +29,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 // handle invalid JSON
 app.use(init.jsonParseHandler);
-
+// static assets
+app.use(express.static(__dirname + "/public"));
 // setup session for 12 hours
 app.use(
   session({
@@ -50,7 +51,6 @@ app.post("/register", userController.create);
 // login
 app.get("/login", userController.getLoginView);
 app.post("/login", userController.login);
-
 
 // bind to port and run functions
 app.listen(PORT, "127.0.0.1", () => {
