@@ -47,6 +47,7 @@ app.use(
 // home page
 app.get("/", homeController.getHomeView);
 // register
+app.get("/register", userController.getRegisterView);
 app.post("/register", userController.create);
 // login
 app.get("/login", userController.getLoginView);

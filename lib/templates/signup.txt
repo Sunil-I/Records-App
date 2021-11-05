@@ -1,0 +1,10 @@
+Hello {NAME},
+
+Your email address was used to signup to this website: {BASE_URL}
+
+You can verify your account by clicking this link: {VERIFY_URL}
+
+If you did not signup, you should reply to this email and we will delete the account.
+
+Thanks,
+Admin

@@ -1,7 +1,10 @@
 // models
 const User = require("../../lib/models/User");
 const bcrypt = require("bcrypt");
-
+// packages
+const nodemailer = require("nodemailer");
+const fs = require("fs");
+const path = require("path");
 // create user
 exports.create = async (req, res) => {
   try {
@@ -49,6 +52,8 @@ exports.create = async (req, res) => {
     });
     // save the user
     await user.save();
+    // email the user
+    await this.sendVerifyMail(user);
     // update session
     req.session.user_id = user.user_id;
     req.session.email = user.email;
@@ -61,7 +66,12 @@ exports.create = async (req, res) => {
       .send({ success: true, message: "User has been registered" });
   } catch (e) {
     console.sentry(e);
-    return res.status(500).json({ success: false, message: e.message });
+    return res
+      .status(500)
+      .json({
+        success: false,
+        message: "An unknown error has occurred - This has been logged!",
+      });
   }
 };
 // login user
@@ -105,7 +115,12 @@ exports.login = async (req, res) => {
     return res.status(200).send({ success: true, message: "Login Successful" });
   } catch (e) {
     console.sentry(e);
-    return res.status(500).send({ sucess: false, message: e.message });
+    return res
+      .status(500)
+      .send({
+        sucess: false,
+        message: "An unknown error has occurred - This has been logged!",
+      });
   }
 };
 
@@ -116,4 +131,56 @@ exports.logout = (req, res) => {
 
 exports.getLoginView = (req, res) => {
   res.render("login", { user: req.session });
+};
+exports.getRegisterView = (req, res) => {
+  res.render("register", { user: req.session });
+};
+
+exports.sendVerifyMail = async (user) => {
+  let transporter = nodemailer.createTransport({
+    host: process.env.MAIL_HOST,
+    port: process.env.MAIL_PORT,
+    secure: process.env.MAIL_SECURE, // true for 465, false for other ports
+    auth: {
+      user: process.env.MAIL_USERNAME,
+      pass: process.env.MAIL_PASSWORD,
+    },
+  });
+
+  function generateText(user) {
+    let template = fs.readFileSync(
+      path.join(__dirname, "..", "..", "lib", "templates", "signup.txt"),
+      "utf8"
+    );
+    return template
+      .replace("{NAME}", user.name)
+      .replace("{BASE_URL}", process.env.BASE_URL)
+      .replace(
+        "{VERIFY_URL}",
+        `${process.env.BASE_URL}verify/${user.verified_hash}`
+      );
+  }
+
+  function generateHTML(user) {
+    let template = fs.readFileSync(
+      path.join(__dirname, "..", "..", "lib", "templates", "signup.html"),
+      "utf8"
+    );
+    return template
+      .replace("{NAME}", user.name)
+      .replace("{BASE_URL}", process.env.BASE_URL)
+      .replace(
+        "{VERIFY_URL}",
+        `${process.env.BASE_URL}verify/${user.verified_hash}`
+      );
+  }
+
+  let mail = await transporter.sendMail({
+    from: process.env.MAIL_FROM,
+    to: user.email,
+    subject: "Please verify your email address.",
+    text: generateText(user),
+    html: generateHTML(user),
+  });
+  return mail;
 };
