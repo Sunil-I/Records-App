@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <meta name="description" content="" />
+    <title>Profile</title>
+
+    <link
+      rel="canonical"
+      href="https://getbootstrap.com/docs/4.5/examples/album/"
+    />
+
+    <!-- Bootstrap core CSS -->
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+      integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z"
+      crossorigin="anonymous"
+    />
+    <!-- ajax -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"> </script>
+
+</head>
+
+<body>
+    <%- include('common/header'); -%>
+	<div class="container col-md-4 col-md-offset-4 form-card text-center">
+		<div>
+			<h2>Profile Details for <%- user.name -%></h1>
+		</div>
+		<div>
+			<center>
+				<table class="table table-hover text-center">
+					<tr>
+						<td>Name </td>
+						<td>
+							<%= user.name %>
+						</td>
+					</tr>
+					<tr>
+						<td>Email </td>
+						<td>
+							<%= user.email %>
+						</td>
+					</tr>
+					<tr>
+						<td>Verified </td>
+						<td>
+							<%= user.verified %>
+						</td>
+					</tr>
+					<tr>
+						<td>Joined </td>
+						<td>
+							<%= user.created_at %>
+						</td>
+					</tr>
+				</table>
+			</center>
+		</div>
+	</div>
+</body>
+
+</html>

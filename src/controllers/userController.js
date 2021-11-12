@@ -5,6 +5,23 @@ const bcrypt = require("bcrypt");
 const nodemailer = require("nodemailer");
 const fs = require("fs");
 const path = require("path");
+
+// views
+exports.logout = (req, res) => {
+  req.session.destroy();
+  res.redirect("/");
+};
+exports.getLoginView = (req, res) => {
+  res.render("login", { user: req.session });
+};
+exports.getRegisterView = (req, res) => {
+  res.render("register", { user: req.session });
+};
+exports.getProfileView = (req, res) => {
+  if (!req.session?.user_id) return res.redirect("/login");
+  return res.render("profile", { user: req.session });
+};
+
 // create user
 exports.create = async (req, res) => {
   try {
@@ -66,14 +83,13 @@ exports.create = async (req, res) => {
       .send({ success: true, message: "User has been registered" });
   } catch (e) {
     console.sentry(e);
-    return res
-      .status(500)
-      .json({
-        success: false,
-        message: "An unknown error has occurred - This has been logged!",
-      });
+    return res.status(500).json({
+      success: false,
+      message: "An unknown error has occurred - This has been logged!",
+    });
   }
 };
+
 // login user
 exports.login = async (req, res) => {
   try {
@@ -115,25 +131,11 @@ exports.login = async (req, res) => {
     return res.status(200).send({ success: true, message: "Login Successful" });
   } catch (e) {
     console.sentry(e);
-    return res
-      .status(500)
-      .send({
-        sucess: false,
-        message: "An unknown error has occurred - This has been logged!",
-      });
+    return res.status(500).send({
+      sucess: false,
+      message: "An unknown error has occurred - This has been logged!",
+    });
   }
-};
-
-exports.logout = (req, res) => {
-  req.session.destroy();
-  res.redirect("/");
-};
-
-exports.getLoginView = (req, res) => {
-  res.render("login", { user: req.session });
-};
-exports.getRegisterView = (req, res) => {
-  res.render("register", { user: req.session });
 };
 
 exports.sendVerifyMail = async (user) => {
