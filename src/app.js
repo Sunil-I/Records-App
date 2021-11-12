@@ -53,9 +53,11 @@ app.post("/register", userController.create);
 app.get("/login", userController.getLoginView);
 app.post("/login", userController.login);
 // logout
-app.get("/logout", userController.logout)
+app.get("/logout", userController.logout);
 // profile
-app.get("/profile", userController.getProfileView)
+app.get("/profile", userController.getProfileView);
+// verify
+app.get("/verify/:hash", userController.getVerifyView);
 // bind to port and run functions
 app.listen(PORT, "127.0.0.1", () => {
   init.logging();

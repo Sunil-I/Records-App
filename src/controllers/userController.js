@@ -22,6 +22,41 @@ exports.getProfileView = (req, res) => {
   return res.render("profile", { user: req.session });
 };
 
+exports.getVerifyView = async (req, res) => {
+  const { hash } = req.params;
+  // if no hash is sent (unlikely since node errors out first)
+  if (!hash)
+    return res.render("verify", {
+      message: "Please input a verification token!",
+      user: req.session,
+    });
+  let query = await User.findOne({ verified_hash: hash });
+  // if the hash is not linked to a user
+  if (!query)
+    return res.render("verify", {
+      message:
+        "Either the verification token is invalid or no existing user has this verification token! ",
+      user: req.session,
+    });
+  // user is already verified
+  if (query.verified)
+    return res.render("verify", {
+      message: "User is already verified!",
+      user: req.session,
+    });
+  // verify user
+  query.verified = true;
+  // save
+  await query.save();
+  // update session if they match
+  if (req.session.email === query.email) req.session.verified = true;
+  // return message
+  return res.render("verify", {
+    message: "Email has been verified!",
+    user: req.session,
+  });
+};
+
 // create user
 exports.create = async (req, res) => {
   try {
@@ -51,7 +86,7 @@ exports.create = async (req, res) => {
     if (query)
       return res.status(400).json({
         success: false,
-        message: "Email is Already Registered",
+        message: "Email is Already Registered.",
       });
     // create user with a generated salt or make a random one with a unique user id
     const user = new User({
@@ -80,12 +115,12 @@ exports.create = async (req, res) => {
     // send api response
     return res
       .status(200)
-      .send({ success: true, message: "User has been registered" });
+      .send({ success: true, message: "User has been registered." });
   } catch (e) {
     console.sentry(e);
     return res.status(500).json({
       success: false,
-      message: "An unknown error has occurred - This has been logged!",
+      message: "An unknown error has occurred.",
     });
   }
 };
@@ -94,17 +129,19 @@ exports.create = async (req, res) => {
 exports.login = async (req, res) => {
   try {
     // define params
-    const { email, password } = req.body;
+    const { email, password, remember } = req.body;
     // check if they exist if not return an error
     if (!password)
       return res.status(400).json({
         success: false,
         message: "Please enter a password.",
+        type: "password",
       });
     if (!email)
       return res.status(400).json({
         success: false,
         message: "Please enter a email.",
+        type: "email",
       });
 
     // check if email is in the database
@@ -113,6 +150,7 @@ exports.login = async (req, res) => {
       return res.status(404).send({
         success: false,
         message: "The email you entered does not exist.",
+        type: "email",
       });
 
     // check if password is correct
@@ -121,19 +159,26 @@ exports.login = async (req, res) => {
       return res.status(401).send({
         success: false,
         message: "The password you entered is not correct.",
+        type: "password",
       });
     }
+    // set session information
     req.session.user_id = user.user_id;
     req.session.email = user.email;
     req.session.name = user.name;
     req.session.verified = user.verified;
     req.session.created_at = user.createdAt;
-    return res.status(200).send({ success: true, message: "Login Successful" });
+    // if remember me is selected/sent change the session to expire in 3 months rather then 12 hours
+    if (remember == "on")
+      req.session.cookie.originalMaxAge = 90 * 24 * 60 * 60 * 1000;
+    return res
+      .status(200)
+      .send({ success: true, message: "Login Successful." });
   } catch (e) {
     console.sentry(e);
     return res.status(500).send({
       sucess: false,
-      message: "An unknown error has occurred - This has been logged!",
+      message: "An unknown error has occurred.",
     });
   }
 };
