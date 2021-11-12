@@ -14,14 +14,14 @@ $(document).ready(() => {
         },
         error: (error) => {
           var err = error.responseJSON;
-          $("#email").text(`E-Mail Address`).css("color", "");
-          $("#password").text(`E-Mail Address`).css("color", "");
+          $("#email-label").text(`Email Address`).css("color", "");
+          $("#password-label").text(`Password`).css("color", "");
           if (err.type == "email") {
-            $("#email")
-              .text(`E-Mail Address - ${err.message}`)
+            $("#email-label")
+              .text(`Email Address - ${err.message}`)
               .css("color", "red");
           } else if (err.type == "password") {
-            $("#password")
+            $("#password-label")
               .text(`Password - ${err.message}`)
               .css("color", "red");
           }

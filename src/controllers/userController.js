@@ -61,22 +61,25 @@ exports.getVerifyView = async (req, res) => {
 exports.create = async (req, res) => {
   try {
     // define params
-    const { name, email, password } = req.body;
+    const { name, email, password, tos } = req.body;
     // check if they exist if not return an error
     if (!name)
       return res.status(400).json({
         success: false,
         message: "Please enter a name.",
+        type: "name",
       });
     if (!password)
       return res.status(400).json({
         success: false,
         message: "Please enter a password.",
+        type: "password"
       });
     if (!email)
       return res.status(400).json({
         success: false,
         message: "Please enter a email.",
+        type: "email",
       });
     // find email in database
     const query = await User.findOne({ email: email });
@@ -87,7 +90,13 @@ exports.create = async (req, res) => {
       return res.status(400).json({
         success: false,
         message: "Email is Already Registered.",
+        type: "email",
       });
+    if (!tos) return res.status(400).json({
+      success: false,
+      message: "Please agree to the ToS.",
+      type: "tos",
+    });
     // create user with a generated salt or make a random one with a unique user id
     const user = new User({
       user_id: count + 1,

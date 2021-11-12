@@ -36,17 +36,17 @@
                   <form class="form-signin" method="POST" id="register-form">
 
                     <div class="form-group">
-                      <label for="name">Name</label>
+                      <label for="name" id="name-label">Name</label>
                       <input id="name" type="name" class="form-control" name="name" required autofocus>
                     </div>
 
                     <div class="form-group">
-                      <label for="email">E-Mail Address</label>
+                      <label for="email" id="email-label">Email Address</label>
                       <input id="email" type="email" class="form-control" name="email" required autofocus>
                     </div>
     
                     <div class="form-group">
-                      <label for="password">Password
+                      <label for="password" id="password-label">Password
                       </label>
                       <input id="password" type="password" class="form-control" name="password" required current-password>
                     </div>
@@ -54,8 +54,7 @@
                     <div class="form-group">
                       <div class="custom-checkbox custom-control">
                         <input type="checkbox" name="tos" id="tos" class="custom-control-input">
-                        <label for="tos" class="custom-control-label">I agree to the Terms of Service!</label>
-                        <p class="float-right" id="message"></p>
+                        <label for="tos" class="custom-control-label" id="tos-label">I agree to the Terms of Service!</label>
                       </div>
                     </div>
     
