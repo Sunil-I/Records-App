@@ -5,7 +5,7 @@ const bcrypt = require("bcrypt");
 const nodemailer = require("nodemailer");
 const fs = require("fs");
 const path = require("path");
-
+const Validation = require("../../lib/Validation");
 // views
 exports.logout = (req, res) => {
   req.session.destroy();
@@ -62,25 +62,29 @@ exports.create = async (req, res) => {
   try {
     // define params
     const { name, email, password, tos } = req.body;
-    // check if they exist if not return an error
-    if (!name)
+    // validation
+    const vEmail = Validation.email(email);
+    const vName = Validation.name(name);
+    const vPassword = Validation.password(password);
+    if (!vName.valid)
       return res.status(400).json({
         success: false,
-        message: "Please enter a name.",
+        message: vName.reason,
         type: "name",
       });
-    if (!password)
+    if (!vPassword.valid)
       return res.status(400).json({
         success: false,
-        message: "Please enter a password.",
-        type: "password"
+        message: vPassword.reason,
+        type: "password",
       });
-    if (!email)
+    if (!vEmail.valid) {
       return res.status(400).json({
         success: false,
-        message: "Please enter a email.",
+        message: vEmail.reason,
         type: "email",
       });
+    }
     // find email in database
     const query = await User.findOne({ email: email });
     // check how many users we already have
@@ -92,11 +96,12 @@ exports.create = async (req, res) => {
         message: "Email is Already Registered.",
         type: "email",
       });
-    if (!tos) return res.status(400).json({
-      success: false,
-      message: "Please agree to the ToS.",
-      type: "tos",
-    });
+    if (!tos)
+      return res.status(400).json({
+        success: false,
+        message: "Please agree to the ToS.",
+        type: "tos",
+      });
     // create user with a generated salt or make a random one with a unique user id
     const user = new User({
       user_id: count + 1,
@@ -146,10 +151,11 @@ exports.login = async (req, res) => {
         message: "Please enter a password.",
         type: "password",
       });
-    if (!email)
+    const vEmail = Validation.email(email);
+    if (!vEmail.valid)
       return res.status(400).json({
         success: false,
-        message: "Please enter a email.",
+        message: vEmail.reason,
         type: "email",
       });
 
