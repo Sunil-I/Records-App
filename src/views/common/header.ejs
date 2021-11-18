@@ -11,6 +11,7 @@
            <a class="nav-link text-dark" href="/accounts">Accounts</a>
            <a class="nav-link text-dark" href="/transactions"> Transactions</a>
            <a class="nav-link text-dark" href="/profile"> Profile</a>
+           <a class="nav-link text-dark" href="https://umami.proxied.cloud/share/aXQUvB1n/Records"> Analytics</a>
            <a class="nav-link text-dark" href="/logout" > <%= user.email %> (Logout) </a> <%
           }%> <% if(!user.name) { %>
           <a class="nav-link text-dark" href="/login"> Login </a>
@@ -19,5 +20,18 @@
         </div>
       </div>
     </nav>
+    <script>
+      if (
+        window.location.host == "com519.sunil.sh" ||
+        window.location.host == "com519-staging.sunil.sh"
+      ) {
+        var script = document.createElement("script");
+        script.async = true
+        script.defer = true
+        script.src = "https://umami.proxied.cloud/umami.js"
+        script.setAttribute("data-website-id", "6245fc32-3f29-404f-9cea-e0a188aebe2c" );
+        document.head.appendChild(script);
+      }
+    </script>
   </header>
   

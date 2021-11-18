@@ -19,9 +19,7 @@ $(document).ready(() => {
           $("#tos-label")
             .text(`I agree to the Terms of Service!`)
             .css("color", "");
-            $("#name-label")
-            .text(`Name`)
-            .css("color", "");
+          $("#name-label").text(`Name`).css("color", "");
           if (err.type == "email") {
             $("#email-label")
               .text(`Email Address - ${err.message}`)
@@ -35,9 +33,7 @@ $(document).ready(() => {
               .text(`I agree to the Terms of Service! - ${err.message}`)
               .css("color", "red");
           } else if (err.type == "name") {
-            $("#name-label")
-              .text(`Name - ${err.message}`)
-              .css("color", "red");
+            $("#name-label").text(`Name - ${err.message}`).css("color", "red");
           }
         },
       });
