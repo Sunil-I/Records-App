@@ -7,7 +7,7 @@ const sentry = require("@sentry/node");
 const session = require("express-session");
 const MongoStore = require("connect-mongo");
 // define environment values
-const { PORT, BASE_URL } = process.env;
+const { PORT, BASE_URL, IP } = process.env;
 // initialization functions
 const init = require("../lib/Initialization");
 // define controllers
@@ -59,7 +59,7 @@ app.get("/profile", userController.getProfileView);
 // verify
 app.get("/verify/:hash", userController.getVerifyView);
 // bind to port and run functions
-app.listen(PORT, "127.0.0.1", () => {
+app.listen(PORT || 5000, IP || "0.0.0.0", () => {
   init.logging();
   init.db();
   init.sentry();
