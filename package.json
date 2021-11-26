@@ -4,6 +4,7 @@
   "description": "create, test, and deploy, a proof of concept data-driven full stack web-application",
   "main": "index.js",
   "scripts": {
+    "start": "node .",
     "lint": "prettier --write .",
     "salt": "node cli/salt",
     "test": "mocha tests/*"
