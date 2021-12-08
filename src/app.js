@@ -61,6 +61,8 @@ app.get("/profile", userController.getProfileView);
 app.get("/verify/:hash", userController.getVerifyView);
 // Accounts
 app.get("/accounts/", accountController.getAccountView);
+app.get("/accounts/new", accountController.getAccountCreateView);
+app.post("/accounts/new", accountController.create);
 // bind to port and run functions
 app.listen(PORT || 5000, IP || "0.0.0.0", () => {
   init.logging();
