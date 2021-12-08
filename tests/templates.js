@@ -8,7 +8,7 @@ describe("Testing templates.", function () {
       path.join(__dirname, "..", "lib", "templates", "signup.txt"),
       "utf8"
     );
-    template = template.replace("{NAME}", "Joe")
+    template = template.replace("{NAME}", "Joe");
     assert.equal(template.includes("Joe"), true);
   });
 });
