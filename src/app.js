@@ -1,4 +1,3 @@
-// define express package
 const express = require("express");
 const app = express();
 // define sentry package
@@ -63,6 +62,7 @@ app.get("/verify/:hash", userController.getVerifyView);
 app.get("/accounts/", accountController.getAccountView);
 app.get("/accounts/new", accountController.getAccountCreateView);
 app.post("/accounts/new", accountController.create);
+app.get("/accounts/delete/:account_id", accountController.deleteAccount);
 // bind to port and run functions
 app.listen(PORT || 5000, IP || "0.0.0.0", () => {
   init.logging();

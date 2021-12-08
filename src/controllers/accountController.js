@@ -1,5 +1,6 @@
 const Account = require("../../lib/models/Account");
 const Validation = require("../../lib/Validation");
+
 exports.create = async (req, res) => {
   const { user_id } = req.session;
   const { name, accountno, sortcode, balance } = req.body;
@@ -76,6 +77,8 @@ exports.create = async (req, res) => {
   await account.save();
   return res.status(200).send({ success: true, message: "Account created!" });
 };
+
+
 exports.getAccountCreateView = async (req, res) => {
   if (!req.session.user_id)
     return res.render("message", {
@@ -84,6 +87,8 @@ exports.getAccountCreateView = async (req, res) => {
     });
   return res.render("create/account", { user: req.session });
 };
+
+
 exports.getAccountView = async (req, res) => {
   const { user_id } = req.session;
   let { page } = req.query;
@@ -114,4 +119,28 @@ exports.getAccountView = async (req, res) => {
     pages: numberOfPages,
     current: page,
   });
+};
+
+
+exports.deleteAccount = async (req, res) => {
+  if (!req.session.user_id)
+    return res.render("message", {
+      user: req.session,
+      message: "Only authenticated users can delete an account!",
+    });
+  const { account_id } = req.params;
+  const { user_id } = req.session;
+  const query = await Account.findOne({ account_id });
+  if (!query)
+    return res.render("message", {
+      user: req.session,
+      message: "The account does not exist!",
+    });
+  if (query.user_id !== user_id)
+    return res.render("message", {
+      user: req.session,
+      message: "Only the account owner can delete this account!",
+    });
+  if (query) await Account.deleteOne({ _id: query._id });
+  return res.redirect("/accounts");
 };
