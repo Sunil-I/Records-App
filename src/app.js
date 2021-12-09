@@ -1,4 +1,3 @@
-// define express package
 const express = require("express");
 const app = express();
 // define sentry package
@@ -13,6 +12,7 @@ const init = require("../lib/Initialization");
 // define controllers
 const userController = require("./controllers/userController");
 const homeController = require("./controllers/homeController");
+const accountController = require("./controllers/accountController");
 // enable sentry logging for production only
 if ((NODE_ENV = "production")) app.use(sentry.Handlers.requestHandler());
 // hide express is running from scrapers
@@ -58,6 +58,13 @@ app.get("/logout", userController.logout);
 app.get("/profile", userController.getProfileView);
 // verify
 app.get("/verify/:hash", userController.getVerifyView);
+// Accounts
+app.get("/accounts/", accountController.getAccountView);
+app.get("/accounts/new", accountController.getAccountCreateView);
+app.post("/accounts/new", accountController.create);
+app.get("/accounts/delete/:account_id", accountController.deleteAccount);
+app.get("/accounts/edit/:account_id", accountController.getAccountEditView);
+app.post("/accounts/edit", accountController.updateAccount);
 // bind to port and run functions
 app.listen(PORT || 5000, IP || "0.0.0.0", () => {
   init.logging();

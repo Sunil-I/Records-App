@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <meta name="description" content="data-driven full-stack web-application" />
+    <title>Records App</title>
+    
+    <!-- Bootstrap core CSS -->
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+      integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z"
+      crossorigin="anonymous"
+    />
+  </head>
+  <body>
+    <%- include('common/header'); -%>
+
+    <main role="main">
+      <section class="jumbotron text-center">
+        <div class="container">
+            <% if(message) { %>
+                <h2 id="message"><%= message%></h2>
+                <%   
+            }%>
+        </div>
+      </section>
+        </div>
+      </div>
+    </main>
+
+    <!-- <%- include('common/footer') -%> -->
+  </body>
+</html>
