@@ -63,6 +63,8 @@ app.get("/accounts/", accountController.getAccountView);
 app.get("/accounts/new", accountController.getAccountCreateView);
 app.post("/accounts/new", accountController.create);
 app.get("/accounts/delete/:account_id", accountController.deleteAccount);
+app.get("/accounts/edit/:account_id", accountController.getAccountEditView);
+app.post("/accounts/edit", accountController.updateAccount);
 // bind to port and run functions
 app.listen(PORT || 5000, IP || "0.0.0.0", () => {
   init.logging();
