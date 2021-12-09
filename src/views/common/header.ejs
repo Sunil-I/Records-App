@@ -11,7 +11,7 @@
            <a class="nav-link text-dark" href="/accounts">Accounts</a>
            <a class="nav-link text-dark" href="/transactions"> Transactions</a>
            <a class="nav-link text-dark" href="/profile"> Profile</a>
-           <a class="nav-link text-dark" href="https://umami.proxied.cloud/share/xlLCKINF/RecordsApp"> Analytics</a>
+           <a class="nav-link text-dark" href="https://umami.proxied.cloud/share/5GLuc1cG/com519"> Analytics</a>
            <a class="nav-link text-dark" href="/logout" > <%= user.email %> (Logout) </a> <%
           }%> <% if(!user.name) { %>
           <a class="nav-link text-dark" href="/login"> Login </a>
@@ -22,13 +22,13 @@
     </nav>
     <script>
       if (
-        window.location.host == "com519-production.herokuapp.com"
+        window.location.host == "com519-production.herokuapp.com" && ["/", "/accounts", "/transactions", "/profile", "/login", "/register"].includes(window.location.pathname)
       ) {
         var script = document.createElement("script");
         script.async = true
         script.defer = true
         script.src = "https://umami.proxied.cloud/umami.js"
-        script.setAttribute("data-website-id", "96f7b6aa-98d0-4767-9ed4-9fcabbaba451" );
+        script.setAttribute("data-website-id", "4cd34fcd-15dc-4973-bd8f-5da40e32fd4b" );
         document.head.appendChild(script);
       }
     </script>
