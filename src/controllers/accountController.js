@@ -10,7 +10,7 @@ exports.create = async (req, res) => {
       success: false,
       message: "Only authenticated users can create an account!",
     });
-  // if variable id not sent
+  // if variable is not sent
   if (!name)
     return res.status(400).json({
       success: false,
@@ -111,7 +111,7 @@ exports.getAccountView = async (req, res) => {
   // calculate number of pages needed
   const numberOfPages = Math.ceil(count / perPage);
   // render page
-  return res.render("accounts", {
+  return res.render("list/accounts", {
     user: req.session,
     accounts: accounts,
     pages: numberOfPages,
@@ -119,7 +119,7 @@ exports.getAccountView = async (req, res) => {
   });
 };
 
-exports.deleteAccount = async (req, res) => {
+exports.delete = async (req, res) => {
   if (!req.session.user_id)
     return res.render("message", {
       user: req.session,

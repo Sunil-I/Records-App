@@ -12,35 +12,35 @@ exports.logout = (req, res) => {
   res.redirect("/");
 };
 exports.getLoginView = (req, res) => {
-  res.render("login", { user: req.session });
+  res.render("user/login", { user: req.session });
 };
 exports.getRegisterView = (req, res) => {
-  res.render("register", { user: req.session });
+  res.render("user/register", { user: req.session });
 };
 exports.getProfileView = (req, res) => {
   if (!req.session?.user_id) return res.redirect("/login");
-  return res.render("profile", { user: req.session });
+  return res.render("user/profile", { user: req.session });
 };
 
 exports.getVerifyView = async (req, res) => {
   const { hash } = req.params;
   // if no hash is sent (unlikely since node errors out first)
   if (!hash)
-    return res.render("verify", {
+    return res.render("user/verify", {
       message: "Please input a verification token!",
       user: req.session,
     });
   let query = await User.findOne({ verified_hash: hash });
   // if the hash is not linked to a user
   if (!query)
-    return res.render("verify", {
+    return res.render("user/verify", {
       message:
         "Either the verification token is invalid or no existing user has this verification token! ",
       user: req.session,
     });
   // user is already verified
   if (query.verified)
-    return res.render("verify", {
+    return res.render("user/verify", {
       message: "User is already verified!",
       user: req.session,
     });
@@ -51,7 +51,7 @@ exports.getVerifyView = async (req, res) => {
   // update session if they match
   if (req.session.email === query.email) req.session.verified = true;
   // return message
-  return res.render("verify", {
+  return res.render("user/verify", {
     message: "Email has been verified!",
     user: req.session,
   });
