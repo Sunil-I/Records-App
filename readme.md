@@ -1,4 +1,4 @@
-# COM519-Assessment
+# Records App
 
 ## Introduction
 
@@ -10,7 +10,7 @@ This project is a data-driven full stack web-application that was designed to ha
 
 ```shell
 
-git clone https://github.com/Sunil-I/COM519-Assessment app
+git clone https://github.com/Sunil-I/Records-App/ app
 
 ```
 
@@ -50,7 +50,20 @@ node .
 
 ## Requirements
 
-1. [MongoDB Database](https://www.mongodb.com/cloud) running with read/write access.
-2. [Node.js ](https://nodejs.org/en/)
+1. [MongoDB Database](https://www.mongodb.com/cloud) (read/write user).
+2. [Node.js v16+](https://nodejs.org/en/)
 3. [Sentry](https://sentry.io)
 4. [SMTP Server](https://mailtrap.io)
+
+# Publicly hosted instances
+
+1. [Development instance](https://com519-dev.sunil.sh)
+2. [Staging instance](https://com519-staging.sunil.sh)
+3. [Production instance](https://com519.sunil.sh)
+4. [Backup Instance](https://com519-production.herokuapp.com/)
+
+- Development instance was used to test features live without production configurations being used.
+
+- Staging instance mimics the production settings locally to ensure production is stable.
+
+- Production instance is completed features deployed live via heroku.
