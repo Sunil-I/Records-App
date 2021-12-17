@@ -94,7 +94,9 @@ exports.profile = async (req, res) => {
   if (!req.session?.user_id) return res.redirect("/login");
   const { user_id } = req.session;
   const accounts = await Account.find({ user_id });
-  const transactions = await Transaction.find({ user_id });
+  const transactions = await Transaction.find({
+    account_id: accounts.map((c) => c.account_id),
+  });
   return res.render("user/profile", {
     user: req.session,
     accounts: accounts.length,

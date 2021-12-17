@@ -17,7 +17,11 @@ $(document).ready(() => {
           $("#id-label").text(`Account ID`).css("color", "");
           $("#type-label").text(`Transaction Type`).css("color", "");
           $("#amount-label").text(`Amount`).css("color", "");
-          if (err.type == "id" || err.type == "account") {
+          if (
+            err.type == "id" ||
+            err.type == "account" ||
+            err.type == "account id"
+          ) {
             $("#id-label")
               .text(`Account ID - ${err.message}`)
               .css("color", "red");

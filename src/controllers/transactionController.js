@@ -1,75 +1,58 @@
 const Transaction = require("../../lib/models/Transaction");
 const Account = require("../../lib/models/Account");
-
-exports.getTransactionView = async (req, res) => {
-  const { user_id } = req.session;
-  let { page } = req.query;
-
-  if (!user_id)
-    return res.render("message", {
-      message: "Only authenticated users can get transactions!",
-      user: req.session,
-    });
-  // 10 results per page
-  const perPage = 10;
-  // parse page input and remove anything thats not a number
-  if (page) page = parseInt(page.toString().replace(/[^0-9]/g, ""));
-  // checks for page num and how many results
-  if (!page) page = 1;
-  // find data
-  const accounts = await Account.find({ user_id: user_id });
-  if (!accounts)
-    return res.render("message", {
-      message: "No accounts to find transactions for!",
-      user: req.session,
-    });
-  const transactions = await Transaction.find({
-    account_id: accounts.map((e) => e.account_id),
-  })
-    .skip(perPage * page - perPage)
-    .limit(10);
-  // count number of transactions we have for user
-  const count = await Transaction.find({ user_id: user_id }).count();
-  // calculate number of pages needed
-  const numberOfPages = Math.ceil(count / perPage);
-  // render page
-  return res.render("list/transactions", {
-    user: req.session,
-    transactions: transactions,
-    pages: numberOfPages,
-    current: page,
-  });
-};
-
+const Validation = require("../../lib/Validation");
 exports.create = async (req, res) => {
   const { user_id } = req.session;
   const { id, type, amount } = req.body;
-
   // if user is not logged in
   if (!user_id)
     return res.status(403).json({
       success: false,
       message: "Only authenticated users can create an transaction!",
     });
-  if (!id)
+  const body_validation = Validation.body([
+    {
+      name: "account id",
+      value: id,
+    },
+    {
+      name: "type",
+      value: type,
+    },
+    {
+      name: "amount",
+      value: amount,
+    },
+  ]);
+  if (body_validation.length)
     return res
       .status(400)
-      .json({ success: false, message: "No ID sent.", type: "id" });
-  if (!type)
-    return res
-      .status(400)
-      .json({ success: false, message: "No Type sent. ", type: "type" });
-  if (!amount)
-    return res
-      .status(400)
-      .json({ success: false, message: "No amount sent.", type: "amount" });
+      .json({ success: false, message: `${body_validation[0]} was not sent.` });
   if (type !== "withdrawal" && type !== "deposit")
     return res.status(400).json({
       success: false,
-      message: "Unknown transaction type given.",
+      message: "transaction type can only be withdrawal or deposit.",
       type: "type",
     });
-
+  const validation_fields = Validation.validate([
+    {
+      name: "account id",
+      value: id,
+      type: "number",
+    },
+    {
+      name: "amount",
+      value: amount,
+      type: "float",
+    },
+  ]);
+  // if validation failed
+  if (validation_fields.length)
+    return res.status(400).json({
+      success: false,
+      message: validation_fields[0].message,
+      type: validation_fields[0].name,
+    });
   const query = await Account.findOne({ account_id: id });
   const count = await Transaction.find({}).countDocuments();
   if (!query)
@@ -99,11 +82,12 @@ exports.create = async (req, res) => {
     account_balance = parseFloat(Number(account_balance + amount).toFixed(2));
   if (type == "withdrawal")
     account_balance = parseFloat(Number(account_balance - amount).toFixed(2));
-
+  // handle edge case of where database is empty
+  let transaction_id = count + 1;
+  if (count == 0) transaction_id = 0;
   query.balance = account_balance;
-
   const transaction = new Transaction({
-    transaction_id: count + 1,
+    transaction_id: transaction_id,
     account_id: id,
     account_name: query.name,
     type: type,
@@ -140,8 +124,8 @@ exports.delete = async (req, res) => {
   const query = await Account.findOne({ account_id: transaction.account_id });
   // the transaction ID somehow doesn't have an account so technically it is missing information.
   if (!query) {
-    await Transaction.deleteOne({ _id: transaction._id})
-    return res.redirect("/transactions")
+    await Transaction.deleteOne({ _id: transaction._id });
+    return res.redirect("/transactions");
   }
   // if we find an account it is linked to then we will check if the owner matches
   if (query.user_id !== user_id)
@@ -150,14 +134,6 @@ exports.delete = async (req, res) => {
       message: "Only the account owner can delete this transaction!",
     });
   if (query) await Transaction.deleteOne({ _id: transaction._id });
+  // todo reverse the transaction on the bank account
   return res.redirect("/transactions");
-};
-
-exports.getTransactionCreateView = async (req, res) => {
-  if (!req.session.user_id)
-    return res.render("message", {
-      user: req.session,
-      message: "Only authenticated users can create an transaction!",
-    });
-  return res.render("create/transaction", { user: req.session });
 };

@@ -28,27 +28,39 @@
 		<div>
 				<table class="table table-hover text-center">
 					<tr>
-						<td>Name </td>
+						<td>Name</td>
 						<td>
 							<%= user.name %>
 						</td>
 					</tr>
 					<tr>
-						<td>Email </td>
+						<td>Email</td>
 						<td>
 							<%= user.email %>
 						</td>
 					</tr>
 					<tr>
-						<td>Verified </td>
+						<td>Verified</td>
 						<td>
 							<%= user.verified %>
 						</td>
 					</tr>
 					<tr>
-						<td>Joined </td>
+						<td>Joined</td>
 						<td>
 							<%= user.created_at %>
+						</td>
+					</tr>
+					<tr>
+						<td>Accounts</td>
+						<td>
+							<%= accounts %>
+						</td>
+					</tr>
+					<tr>
+						<td>Transactions</td>
+						<td>
+							<%= transactions %>
 						</td>
 					</tr>
 				</table>

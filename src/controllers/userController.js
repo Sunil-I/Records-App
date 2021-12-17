@@ -6,55 +6,11 @@ const nodemailer = require("nodemailer");
 const fs = require("fs");
 const path = require("path");
 const Validation = require("../../lib/Validation");
-// views
+
+// logout user
 exports.logout = (req, res) => {
   req.session.destroy();
   res.redirect("/");
-};
-exports.getLoginView = (req, res) => {
-  res.render("user/login", { user: req.session });
-};
-exports.getRegisterView = (req, res) => {
-  res.render("user/register", { user: req.session });
-};
-exports.getProfileView = (req, res) => {
-  if (!req.session?.user_id) return res.redirect("/login");
-  return res.render("user/profile", { user: req.session });
-};
-
-exports.getVerifyView = async (req, res) => {
-  const { hash } = req.params;
-  // if no hash is sent (unlikely since node errors out first)
-  if (!hash)
-    return res.render("user/verify", {
-      message: "Please input a verification token!",
-      user: req.session,
-    });
-  let query = await User.findOne({ verified_hash: hash });
-  // if the hash is not linked to a user
-  if (!query)
-    return res.render("user/verify", {
-      message:
-        "Either the verification token is invalid or no existing user has this verification token! ",
-      user: req.session,
-    });
-  // user is already verified
-  if (query.verified)
-    return res.render("user/verify", {
-      message: "User is already verified!",
-      user: req.session,
-    });
-  // verify user
-  query.verified = true;
-  // save
-  await query.save();
-  // update session if they match
-  if (req.session.email === query.email) req.session.verified = true;
-  // return message
-  return res.render("user/verify", {
-    message: "Email has been verified!",
-    user: req.session,
-  });
 };
 
 // create user
@@ -62,34 +18,57 @@ exports.create = async (req, res) => {
   try {
     // define params
     const { name, email, password, tos } = req.body;
-    // validation
-    const vEmail = Validation.email(email);
-    const vName = Validation.name(name);
-    const vPassword = Validation.password(password);
-    if (!vName.valid)
+    // check if we recieved valid data
+    const body_validation = Validation.body([
+      {
+        name: "name",
+        value: name,
+      },
+      {
+        name: "email",
+        value: email,
+      },
+      {
+        name: "password",
+        value: password,
+      },
+    ]);
+    if (body_validation.length)
       return res.status(400).json({
         success: false,
-        message: vName.reason,
+        message: `${body_validation[0]} was not sent.`,
+      });
+
+    // validate data sent
+    const validation_fields = Validation.validate([
+      {
+        name: "name",
+        value: name,
         type: "name",
-      });
-    if (!vPassword.valid)
-      return res.status(400).json({
-        success: false,
-        message: vPassword.reason,
-        type: "password",
-      });
-    if (!vEmail.valid) {
-      return res.status(400).json({
-        success: false,
-        message: vEmail.reason,
+      },
+      {
+        name: "email",
+        value: email,
         type: "email",
+      },
+      {
+        name: "password",
+        value: password,
+        type: "password",
+      },
+    ]);
+    // if validation failed
+    if (validation_fields.length)
+      return res.status(400).json({
+        success: false,
+        message: validation_fields[0].message,
+        type: validation_fields[0].name,
       });
-    }
     // find email in database
     const query = await User.findOne({ email: email });
     // check how many users we already have
     const count = await User.find({}).countDocuments();
-    // if emaiil exists reject with 400
+    // if email exists reject with 400
     if (query)
       return res.status(400).json({
         success: false,
@@ -103,8 +82,11 @@ exports.create = async (req, res) => {
         type: "tos",
       });
     // create user with a generated salt or make a random one with a unique user id
+    // handle edge case of user db being empty!
+    let user_id = count + 1;
+    if (count == 0 || !count) user_id = 0;
     const user = new User({
-      user_id: count + 1,
+      user_id: user_id,
       name: name,
       email: email,
       password: await bcrypt.hash(
@@ -144,21 +126,37 @@ exports.login = async (req, res) => {
   try {
     // define params
     const { email, password, remember } = req.body;
-    // check if they exist if not return an error
-    if (!password)
+    // check if we recieved valid data
+    const body_validation = Validation.body([
+      {
+        name: "email",
+        value: email,
+      },
+      {
+        name: "password",
+        value: password,
+      },
+    ]);
+    if (body_validation.length)
       return res.status(400).json({
         success: false,
-        message: "Please enter a password.",
-        type: "password",
+        message: `${body_validation[0]} was not sent.`,
       });
-    const vEmail = Validation.email(email);
-    if (!vEmail.valid)
-      return res.status(400).json({
-        success: false,
-        message: vEmail.reason,
+    // validate data sent
+    const validation_fields = Validation.validate([
+      {
+        name: "email",
+        value: email,
         type: "email",
+      },
+    ]);
+    // if validation failed
+    if (validation_fields.length)
+      return res.status(400).json({
+        success: false,
+        message: validation_fields[0].message,
+        type: validation_fields[0].name,
       });
-
     // check if email is in the database
     const user = await User.findOne({ email: email });
     if (!user)
