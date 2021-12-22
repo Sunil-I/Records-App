@@ -5,7 +5,10 @@ exports.create = async (req, res) => {
   const { user_id } = req.session;
   const { name, accountno, sortcode, balance } = req.body;
   //  if user is not logged in
-  if (!user_id)
+  if (
+    typeof req.session.user_id === "undefined" ||
+    typeof req.session.user_id === "null"
+  )
     return res.status(403).json({
       success: false,
       message: "Only authenticated users can create an account!",
@@ -82,7 +85,10 @@ exports.create = async (req, res) => {
 };
 
 exports.delete = async (req, res) => {
-  if (!req.session.user_id)
+  if (
+    typeof req.session.user_id === "undefined" ||
+    typeof req.session.user_id === "null"
+  )
     return res.render("message", {
       user: req.session,
       message: "Only authenticated users can delete an account!",
@@ -113,7 +119,7 @@ exports.updateAccount = async (req, res) => {
   const { user_id } = req.session;
   const { name, accountno, sortcode, balance, account_id } = req.body;
   // if user is not logged in
-  if (!user_id)
+  if (typeof user_id === "undefined" || typeof user_id === "null")
     return res.status(403).json({
       success: false,
       message: "Only authentined users can create an account!",

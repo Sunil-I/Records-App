@@ -5,7 +5,7 @@ exports.create = async (req, res) => {
   const { user_id } = req.session;
   const { id, type, amount } = req.body;
   // if user is not logged in
-  if (!user_id)
+  if (typeof user_id === "undefined" || typeof user_id === "null")
     return res.status(403).json({
       success: false,
       message: "Only authenticated users can create an transaction!",
@@ -105,7 +105,10 @@ exports.create = async (req, res) => {
 
 exports.delete = async (req, res) => {
   // if not logged in
-  if (!req.session.user_id)
+  if (
+    typeof req.session.user_id === "undefined" ||
+    typeof req.session.user_id === "null"
+  )
     return res.render("message", {
       user: req.session,
       message: "Only authenticated users can delete an transaction!",

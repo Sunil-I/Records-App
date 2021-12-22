@@ -13,7 +13,7 @@ exports.home = (req, res) => {
 exports.editAccount = async (req, res) => {
   const { account_id } = req.params;
   const { user_id } = req.session;
-  if (!user_id)
+  if (typeof user_id === "undefined" || typeof user_id === "null")
     return res.render("message", {
       user: req.session,
       message: "Only authenticated users can edit an account ",
@@ -25,6 +25,7 @@ exports.editAccount = async (req, res) => {
   if (!query)
     return res.render("message", {
       message: "You do not own this account/it does not exist!",
+      user: req.session,
     });
   return res.render("edit/account", {
     account: query,
@@ -33,7 +34,10 @@ exports.editAccount = async (req, res) => {
 };
 
 exports.createAccount = async (req, res) => {
-  if (!req.session.user_id)
+  if (
+    typeof req.session.user_id === "undefined" ||
+    typeof req.session.user_id === "null"
+  )
     return res.render("message", {
       user: req.session,
       message: "Only authenticated users can create an account!",
@@ -46,8 +50,7 @@ exports.createAccount = async (req, res) => {
 exports.accounts = async (req, res) => {
   const { user_id } = req.session;
   let { page } = req.query;
-
-  if (!user_id)
+  if (typeof user_id === "undefined" || typeof user_id === "null")
     return res.render("message", {
       message: "Only authenticated users can get accounts!",
       user: req.session,
@@ -63,7 +66,9 @@ exports.accounts = async (req, res) => {
     user_id: user_id,
   })
     .skip(perPage * page - perPage)
-    .limit(10);
+    .limit(10)
+    .sort([["account_id", 1]]);
+  //.sort("id");
   // count number of accounts we have for user
   const count = await Account.find({
     user_id: user_id,
@@ -76,6 +81,7 @@ exports.accounts = async (req, res) => {
     accounts: accounts,
     pages: numberOfPages,
     current: page,
+    q: "",
   });
 };
 
@@ -91,7 +97,11 @@ exports.register = (req, res) => {
   });
 };
 exports.profile = async (req, res) => {
-  if (!req.session?.user_id) return res.redirect("/login");
+  if (
+    typeof req.session.user_id === "undefined" ||
+    typeof req.session.user_id === "null"
+  )
+    return res.redirect("/login");
   const { user_id } = req.session;
   const accounts = await Account.find({ user_id });
   const transactions = await Transaction.find({
@@ -144,9 +154,9 @@ exports.verify = async (req, res) => {
 // transactions
 exports.transactions = async (req, res) => {
   const { user_id } = req.session;
-  let { page } = req.query;
+  let { page, id } = req.query;
 
-  if (!user_id)
+  if (typeof user_id === "undefined" || typeof user_id === "null")
     return res.render("message", {
       message: "Only authenticated users can get transactions!",
       user: req.session,
@@ -158,22 +168,34 @@ exports.transactions = async (req, res) => {
   // checks for page num and how many results
   if (!page) page = 1;
   // find data
-  const accounts = await Account.find({
-    user_id: user_id,
-  });
+  let accounts;
+  if (!id) {
+    accounts = await Account.find({
+      user_id: user_id,
+    });
+  }
+  if (id) {
+    accounts = await Account.find({
+      account_id: id,
+      user_id: user_id,
+    });
+  }
   if (!accounts)
     return res.render("message", {
       message: "No accounts to find transactions for!",
       user: req.session,
     });
+
   const transactions = await Transaction.find({
     account_id: accounts.map((e) => e.account_id),
   })
     .skip(perPage * page - perPage)
-    .limit(10);
+    .limit(10)
+    .sort([["transaction_date", -1]]);
   // count number of transactions we have for user
   const count = await Transaction.find({
     user_id: user_id,
+    account_id: accounts.map((e) => e.account_id),
   }).count();
   // calculate number of pages needed
   const numberOfPages = Math.ceil(count / perPage);
@@ -183,11 +205,15 @@ exports.transactions = async (req, res) => {
     transactions: transactions,
     pages: numberOfPages,
     current: page,
+    q: id ? "&id=" + id : "",
   });
 };
 
 exports.createTransaction = async (req, res) => {
-  if (!req.session.user_id)
+  if (
+    typeof req.session.user_id === "undefined" ||
+    typeof req.session.user_id === "null"
+  )
     return res.render("message", {
       user: req.session,
       message: "Only authenticated users can create an transaction!",

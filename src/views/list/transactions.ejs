@@ -9,7 +9,7 @@
       <meta name="description" content="data-driven full-stack web-application" />
       <title>Accounts</title>
       <!-- Bootstrap core CSS -->
-      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css" media="print" onload="this.media='all'; this.onload=null;">
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css">
   </head>
    <body>
       <%- include("../common/header"); -%>
@@ -39,6 +39,7 @@
                   <td><%=  trans.transaction_date.toLocaleDateString('en-GB') %></td>
                   <td ><a href="/transactions/edit/<%= trans.transaction_id %>" class='btn btn-info btn-xs'><span class="glyphicon glyphicon-edit"></span> Edit</a> 
                      <a  href="/transactions/delete/<%= trans.transaction_id %>" class="btn btn-danger btn-xs"><span class="glyphicon glyphicon-remove"></span> Delete</a>
+                     <a  href="/transactions/?page=0&id=<%= trans.account_id %>" class="btn btn-primary btn-xs"><span class="glyphicon glyphicon-remove"></span> Filter</a>
                   </td>
                </tr>
                <%  
