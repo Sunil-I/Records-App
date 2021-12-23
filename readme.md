@@ -50,7 +50,7 @@ node .
 
 ## Requirements
 
-1. [MongoDB Database](https://www.mongodb.com/cloud) (read/write user).
+1. [MongoDB Database](https://www.mongodb.com/cloud)
 2. [Node.js v16+](https://nodejs.org/en/)
 3. [Sentry](https://sentry.io)
 4. [SMTP Server](https://mailtrap.io)
