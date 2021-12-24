@@ -37,7 +37,7 @@
                   <td>&#163;<%=  trans.amount  %></td>
                   <td>&#163;<%=  trans.balance  %></td>
                   <td><%=  trans.transaction_date.toLocaleDateString('en-GB') %></td>
-                  <td ><a href="/transactions/edit/<%= trans.transaction_id %>" class='btn btn-info btn-xs'><span class="glyphicon glyphicon-edit"></span> Edit</a> 
+                  <td > 
                      <a  href="/transactions/delete/<%= trans.transaction_id %>" class="btn btn-danger btn-xs"><span class="glyphicon glyphicon-remove"></span> Delete</a>
                      <a  href="/transactions/?page=0&id=<%= trans.account_id %>" class="btn btn-primary btn-xs"><span class="glyphicon glyphicon-remove"></span> Filter</a>
                   </td>

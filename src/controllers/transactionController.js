@@ -136,7 +136,7 @@ exports.delete = async (req, res) => {
       user: req.session,
       message: "Only the account owner can delete this transaction!",
     });
-  if (query) await Transaction.deleteOne({ _id: transaction._id });
-  // todo reverse the transaction on the bank account
+  await Transaction.deleteOne({ _id: transaction._id });
+  // redirect
   return res.redirect("/transactions");
 };
