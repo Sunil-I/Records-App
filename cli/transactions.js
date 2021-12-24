@@ -66,7 +66,7 @@ async function main() {
 init.db().then(async () => {
   // database queries
   count = await Transaction.find({}).countDocuments();
-  if (typeof count == "object") count = 0;
+  if (count === 0) count = -1;
   query = await Account.findOne({ account_id: args[2] });
   // if account doesn't exist
   if (!query) {
