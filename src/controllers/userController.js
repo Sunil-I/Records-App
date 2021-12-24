@@ -122,6 +122,72 @@ exports.create = async (req, res) => {
     });
   }
 };
+
+exports.update = async (req, res) => {
+  // define variables
+  const { email, name } = req.body;
+  const { user_id } = req.session;
+  // check if logged in
+  if (typeof user_id === "undefined" || typeof user_id === "null")
+    return res.status(401).json({
+      success: false,
+      message: "You need to be logged in!",
+      type: "user",
+    });
+  // check if we recieved valid data
+  const body_validation = Validation.body([
+    {
+      name: "name",
+      value: name,
+    },
+    {
+      name: "email",
+      value: email,
+    },
+  ]);
+  if (body_validation.length)
+    return res.status(400).json({
+      success: false,
+      message: `${body_validation[0]} was not sent.`,
+    });
+
+  // validate data sent
+  const validation_fields = Validation.validate([
+    {
+      name: "name",
+      value: name,
+      type: "name",
+    },
+    {
+      name: "email",
+      value: email,
+      type: "email",
+    },
+  ]);
+  // if validation failed
+  if (validation_fields.length)
+    return res.status(400).json({
+      success: false,
+      message: validation_fields[0].message,
+      type: validation_fields[0].name,
+    });
+
+  // grab user
+  const user = await User.findOne({ user_id });
+  if (!user)
+    return res
+      .status(400)
+      .json({ success: false, message: "Could not find user!", type: "user" });
+  user.email = email;
+  user.name = name;
+  await user.save();
+  req.session.name = name;
+  req.session.email = email;
+  return res
+    .status(200)
+    .json({ success: true, message: "Updated user details." });
+};
+
 // delete user
 exports.delete = async (req, res) => {
   const { password, confirm } = req.body;

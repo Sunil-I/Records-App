@@ -106,6 +106,16 @@ exports.close = (req, res) => {
     user: req.session,
   });
 };
+exports.update = (req, res) => {
+  if (
+    typeof req.session.user_id === "undefined" ||
+    typeof req.session.user_id === "null"
+  )
+    return res.redirect("/login");
+  res.render("user/update", {
+    user: req.session,
+  });
+};
 exports.profile = async (req, res) => {
   if (
     typeof req.session.user_id === "undefined" ||

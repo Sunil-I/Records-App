@@ -54,6 +54,9 @@ app.post("/login", userController.login);
 // close account
 app.get("/close", viewController.close);
 app.post("/close", userController.delete);
+// update account
+app.get("/update", viewController.update);
+app.post("/update", userController.update);
 // logout
 app.get("/logout", userController.logout);
 // profile
