@@ -71,9 +71,6 @@ app.get("/transactions/new", viewController.createTransaction);
 // transactions action endpoints
 app.get("/transactions/delete/:transaction_id", transactionController.delete);
 app.post("/transactions/new", transactionController.create);
-app.get("/test", (req, res) =>
-  res.render("message", { message: "test", user: req.session })
-);
 // bind to port and run functions
 app.listen(PORT || 5000, IP || "0.0.0.0", () => {
   init.logging();
