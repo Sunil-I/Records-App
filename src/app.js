@@ -51,6 +51,9 @@ app.post("/register", userController.create);
 // login
 app.get("/login", viewController.login);
 app.post("/login", userController.login);
+// close account
+app.get("/close", viewController.close);
+app.post("/close", userController.delete);
 // logout
 app.get("/logout", userController.logout);
 // profile

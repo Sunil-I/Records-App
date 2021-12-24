@@ -1,7 +1,9 @@
 // models
 const User = require("../../lib/models/User");
-const bcrypt = require("bcrypt");
+const Account = require("../../lib/models/Account");
+const Transaction = require("../../lib/models/Transaction");
 // packages
+const bcrypt = require("bcrypt");
 const nodemailer = require("nodemailer");
 const fs = require("fs");
 const path = require("path");
@@ -117,6 +119,72 @@ exports.create = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: "An unknown error has occurred.",
+    });
+  }
+};
+// delete user
+exports.delete = async (req, res) => {
+  const { password, confirm } = req.body;
+  const { user_id } = req.session;
+
+  // check if we recieved valid data
+  const body_validation = Validation.body([
+    {
+      name: "password",
+      value: password,
+    },
+    {
+      name: "confirm",
+      value: confirm,
+    },
+  ]);
+  if (body_validation.length)
+    return res.status(400).json({
+      success: false,
+      message: `${body_validation[0]} was not sent.`,
+      type: body_validation[0],
+    });
+  // check if logged in
+  if (typeof user_id === "undefined" || typeof user_id === "null")
+    return res.status(401).json({
+      success: false,
+      message: "You need to be logged in!",
+      type: "user",
+    });
+  // find user
+  const user = await User.findOne({ user_id });
+  if (!user)
+    return res
+      .status(400)
+      .json({ success: false, message: "Could not find user!", type: "user" });
+  // check password
+  const validPass = await bcrypt.compare(password, user.password);
+  if (!validPass) {
+    return res.status(401).send({
+      success: false,
+      message: "The password you entered is not correct.",
+      type: "password",
+    });
+  }
+  if (confirm === "on") {
+    // find accounts
+    const accounts = await Account.find({ user_id });
+    // delete user
+    await User.deleteOne({ user_id });
+    // delete transactions
+    await Transaction.deleteMany({
+      account_id: accounts.map((acc) => acc.account_id),
+    });
+    // delete accounts
+    await Account.deleteMany({ user_id });
+    // destroy session
+    await req.session.destroy();
+    return res.status(200).json({ success: true, message: "Deleted account!" });
+  } else {
+    return res.status(400).json({
+      success: false,
+      message: "Unable to delete account!",
+      type: "confirm",
     });
   }
 };

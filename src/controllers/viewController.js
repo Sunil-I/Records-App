@@ -96,6 +96,16 @@ exports.register = (req, res) => {
     user: req.session,
   });
 };
+exports.close = (req, res) => {
+  if (
+    typeof req.session.user_id === "undefined" ||
+    typeof req.session.user_id === "null"
+  )
+    return res.redirect("/login");
+  res.render("user/close", {
+    user: req.session,
+  });
+};
 exports.profile = async (req, res) => {
   if (
     typeof req.session.user_id === "undefined" ||
