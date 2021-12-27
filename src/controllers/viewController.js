@@ -33,6 +33,31 @@ exports.editAccount = async (req, res) => {
   });
 };
 
+
+exports.viewAccount = async (req, res) => {
+  const { account_id } = req.params;
+  const { user_id } = req.session;
+  if (typeof user_id === "undefined" || typeof user_id === "null")
+    return res.render("message", {
+      user: req.session,
+      message: "Only authenticated users can view an account ",
+    });
+  const query = await Account.findOne({
+    account_id: account_id,
+    user_id: user_id,
+  });
+  if (!query)
+    return res.render("message", {
+      message: "You do not own this account/it does not exist!",
+      user: req.session,
+    });
+  return res.render("view/account", {
+    account: query,
+    user: req.session,
+  });
+};
+
+
 exports.createAccount = async (req, res) => {
   if (
     typeof req.session.user_id === "undefined" ||
