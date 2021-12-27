@@ -1,73 +1,79 @@
 const Account = require("../../lib/models/Account");
+const Transaction = require("../../lib/models/Transaction");
 const Validation = require("../../lib/Validation");
-
 exports.create = async (req, res) => {
   const { user_id } = req.session;
   const { name, accountno, sortcode, balance } = req.body;
-  // if user is not logged in
-  if (!user_id)
+  //  if user is not logged in
+  if (
+    typeof req.session.user_id === "undefined" ||
+    typeof req.session.user_id === "null"
+  )
     return res.status(403).json({
       success: false,
       message: "Only authenticated users can create an account!",
     });
-  // if variable id not sent
-  if (!name)
+  // if variable is not sent
+  const body_validation = Validation.body([
+    {
+      name: "name",
+      value: name,
+    },
+    {
+      name: "account number",
+      value: accountno,
+    },
+    {
+      name: "sort code",
+      value: sortcode,
+    },
+    {
+      name: "balance",
+      value: balance,
+    },
+  ]);
+  if (body_validation.length)
     return res.status(400).json({
       success: false,
-      message: "Please give a name!",
-      type: "name",
-    });
-
-  if (!accountno)
-    return res.status(400).json({
-      success: false,
-      message: "Please give an account number!",
-      type: "accountno",
-    });
-  if (!sortcode)
-    return res.status(400).json({
-      success: false,
-      message: "Please give a sort code.",
-      type: "sortcode",
-    });
-  if (!balance)
-    return res.status(400).json({
-      success: false,
-      message: "Please give a balance.",
-      type: "balance",
+      message: `${body_validation[0]} was not sent!`,
+      type: body_validation[0],
     });
   // check input
-  const validation_name = Validation.name(name);
-  const validation_accountNo = Validation.numberLong(accountno);
-  const validation_sortCode = Validation.numberLong(sortcode);
-  const validation_balance = Validation.float(balance);
+  const validation_fields = Validation.validate([
+    {
+      name: "name",
+      value: name,
+      type: "name",
+    },
+    {
+      name: "account number",
+      value: accountno,
+      type: "numberLong",
+    },
+    {
+      name: "sort code",
+      value: sortcode,
+      type: "numberLong",
+    },
+    {
+      name: "balance",
+      value: balance,
+      type: "float",
+    },
+  ]);
   // if validation failed
-  if (!validation_name.valid)
-    return res
-      .status(400)
-      .json({ success: false, message: validation_name.reason, type: "name" });
-  if (!validation_accountNo.valid)
+  if (validation_fields.length)
     return res.status(400).json({
       success: false,
-      message: validation_accountNo.reason,
-      type: "accountno",
+      message: validation_fields[0].message,
+      type: validation_fields[0].name,
     });
-  if (!validation_sortCode.valid)
-    return res.status(400).json({
-      success: false,
-      message: validation_sortCode.reason,
-      type: "sortcode",
-    });
-  if (!validation_balance.valid)
-    return res.status(400).json({
-      success: false,
-      message: validation_balance.reason,
-      type: "balance",
-    });
-  // count accounts
+  // count accounts + handle edge case of 0 accounts
   const count = await Account.find({}).countDocuments();
+  let account_id = count + 1;
+  if (count === 0) account_id = 0;
   const account = new Account({
-    account_id: count + 1,
+    account_id: account_id,
     user_id: user_id,
     name: name,
     balance: balance,
@@ -78,49 +84,11 @@ exports.create = async (req, res) => {
   return res.status(200).send({ success: true, message: "Account created!" });
 };
 
-exports.getAccountCreateView = async (req, res) => {
-  if (!req.session.user_id)
-    return res.render("message", {
-      user: req.session,
-      message: "Only authenticated users can create an account!",
-    });
-  return res.render("create/account", { user: req.session });
-};
-
-exports.getAccountView = async (req, res) => {
-  const { user_id } = req.session;
-  let { page } = req.query;
-
-  if (!user_id)
-    return res.render("message", {
-      message: "Only authenticated users can get accounts!",
-      user: req.session,
-    });
-  // 10 results per page
-  const perPage = 10;
-  // parse page input and remove anything thats not a number
-  if (page) page = parseInt(page.toString().replace(/[^0-9]/g, ""));
-  // checks for page num and how many results
-  if (!page) page = 1;
-  // find data
-  const accounts = await Account.find({ user_id: user_id })
-    .skip(perPage * page - perPage)
-    .limit(10);
-  // count number of accounts we have for user
-  const count = await Account.find({ user_id: user_id }).count();
-  // calculate number of pages needed
-  const numberOfPages = Math.ceil(count / perPage);
-  // render page
-  return res.render("accounts", {
-    user: req.session,
-    accounts: accounts,
-    pages: numberOfPages,
-    current: page,
-  });
-};
-
-exports.deleteAccount = async (req, res) => {
-  if (!req.session.user_id)
+exports.delete = async (req, res) => {
+  if (
+    typeof req.session.user_id === "undefined" ||
+    typeof req.session.user_id === "null"
+  )
     return res.render("message", {
       user: req.session,
       message: "Only authenticated users can delete an account!",
@@ -128,121 +96,114 @@ exports.deleteAccount = async (req, res) => {
   const { account_id } = req.params;
   const { user_id } = req.session;
   const query = await Account.findOne({ account_id });
+  // account doesn't exist
   if (!query)
     return res.render("message", {
       user: req.session,
       message: "The account does not exist!",
     });
+  // checking if logged in user owns account
   if (query.user_id !== user_id)
     return res.render("message", {
       user: req.session,
       message: "Only the account owner can delete this account!",
     });
+  // delete account
   if (query) await Account.deleteOne({ _id: query._id });
+  // delete transactions relating to account
+  if (query) await Transaction.deleteMany({ account_id: account_id });
   return res.redirect("/accounts");
-};
-
-exports.getAccountEditView = async (req, res) => {
-  const { account_id } = req.params;
-  const { user_id } = req.session;
-  if (!user_id)
-    return res.render("message", {
-      user: req.session,
-      message: "Only authenticated users can edit an account ",
-    });
-  const query = await Account.findOne({
-    account_id: account_id,
-    user_id: user_id,
-  });
-  if (!query)
-    return res.render("message", {
-      message: "You do not own this account/it does not exist!",
-    });
-  return res.render("edit/account", { account: query, user: req.session });
 };
 
 exports.updateAccount = async (req, res) => {
   const { user_id } = req.session;
   const { name, accountno, sortcode, balance, account_id } = req.body;
   // if user is not logged in
-  if (!user_id)
+  if (typeof user_id === "undefined" || typeof user_id === "null")
     return res.status(403).json({
       success: false,
-      message: "Only authenticated users can create an account!",
+      message: "Only authentined users can create an account!",
     });
-  // if variable not sent
-  if (!account_id)
-    return res.status(403).json({
-      success: false,
-      message: "No account id sent!",
-    });
-  if (!name)
+  const body_validation = Validation.body([
+    {
+      name: "account id",
+      value: account_id,
+    },
+    {
+      name: "name",
+      value: name,
+    },
+    {
+      name: "account number",
+      value: accountno,
+    },
+    {
+      name: "sort code",
+      value: sortcode,
+    },
+    {
+      name: "balance",
+      value: balance,
+    },
+  ]);
+  if (body_validation.length)
     return res.status(400).json({
       success: false,
-      message: "Please give a name!",
-      type: "name",
-    });
-
-  if (!accountno)
-    return res.status(400).json({
-      success: false,
-      message: "Please give an account number!",
-      type: "accountno",
-    });
-  if (!sortcode)
-    return res.status(400).json({
-      success: false,
-      message: "Please give a sort code.",
-      type: "sortcode",
-    });
-  if (!balance)
-    return res.status(400).json({
-      success: false,
-      message: "Please give a balance.",
-      type: "balance",
+      message: `${body_validation[0]} was not sent!`,
+      type: body_validation[0],
     });
   // check input
-  const validation_name = Validation.name(name);
-  const validation_accountNo = Validation.numberLong(accountno);
-  const validation_sortCode = Validation.numberLong(sortcode);
-  const validation_balance = Validation.float(balance);
+  const validation_fields = Validation.validate([
+    {
+      name: "account id",
+      value: account_id,
+      type: "number",
+    },
+    {
+      name: "name",
+      value: name,
+      type: "name",
+    },
+    {
+      name: "account number",
+      value: accountno,
+      type: "numberLong",
+    },
+    {
+      name: "sort code",
+      value: sortcode,
+      type: "numberLong",
+    },
+    {
+      name: "balance",
+      value: balance,
+      type: "float",
+    },
+  ]);
   // if validation failed
-  if (!validation_name.valid)
-    return res
-      .status(400)
-      .json({ success: false, message: validation_name.reason, type: "name" });
-  if (!validation_accountNo.valid)
+  if (validation_fields.length)
     return res.status(400).json({
       success: false,
-      message: validation_accountNo.reason,
-      type: "accountno",
-    });
-  if (!validation_sortCode.valid)
-    return res.status(400).json({
-      success: false,
-      message: validation_sortCode.reason,
-      type: "sortcode",
-    });
-  if (!validation_balance.valid)
-    return res.status(400).json({
-      success: false,
-      message: validation_balance.reason,
-      type: "balance",
+      message: validation_fields[0].message,
+      type: validation_fields[0].name,
     });
 
   const query = await Account.findOne({ account_id });
+  // if account does not exist
   if (!query)
     return res.status(400).json({
       success: false,
       message: "The account does not exist!",
       type: "account",
     });
+  // checking if account owner is the logged in user
   if (query.user_id !== user_id)
     return res.status(403).json({
       success: false,
       message: "Only the account owner can edit this account!",
       type: "account",
     });
+  // update details
   if (query) {
     query.name = name;
     query.accountno = accountno;

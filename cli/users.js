@@ -46,6 +46,7 @@ async function main() {
 
 init.db().then(async () => {
   count = await User.find({}).countDocuments();
+  if (count === 0) count = -1;
   for (i = 0; i < args[2]; i++) main();
   User.insertMany(out)
     .then((r) =>

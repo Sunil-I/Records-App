@@ -10,9 +10,10 @@ const { PORT, BASE_URL, IP } = process.env;
 // initialization functions
 const init = require("../lib/Initialization");
 // define controllers
+const viewController = require("./controllers/viewController");
 const userController = require("./controllers/userController");
-const homeController = require("./controllers/homeController");
 const accountController = require("./controllers/accountController");
+const transactionController = require("./controllers/transactionController");
 // enable sentry logging for production only
 if ((NODE_ENV = "production")) app.use(sentry.Handlers.requestHandler());
 // hide express is running from scrapers
@@ -42,29 +43,41 @@ app.use(
   })
 );
 
-// routes
-
 // home page
-app.get("/", homeController.getHomeView);
+app.get("/", viewController.home);
 // register
-app.get("/register", userController.getRegisterView);
+app.get("/register", viewController.register);
 app.post("/register", userController.create);
 // login
-app.get("/login", userController.getLoginView);
+app.get("/login", viewController.login);
 app.post("/login", userController.login);
+// close account
+app.get("/close", viewController.close);
+app.post("/close", userController.delete);
+// update account
+app.get("/update", viewController.update);
+app.post("/update", userController.update);
 // logout
 app.get("/logout", userController.logout);
 // profile
-app.get("/profile", userController.getProfileView);
-// verify
-app.get("/verify/:hash", userController.getVerifyView);
-// Accounts
-app.get("/accounts/", accountController.getAccountView);
-app.get("/accounts/new", accountController.getAccountCreateView);
+app.get("/profile", viewController.profile);
+// verify view
+app.get("/verify/:hash", viewController.verify);
+// account views
+app.get("/accounts/", viewController.accounts);
+app.get("/accounts/new", viewController.createAccount);
+app.get("/accounts/edit/:account_id", viewController.editAccount);
+app.get("/accounts/view/:account_id", viewController.viewAccount);
+// account action endpoints
+app.get("/accounts/delete/:account_id", accountController.delete);
 app.post("/accounts/new", accountController.create);
-app.get("/accounts/delete/:account_id", accountController.deleteAccount);
-app.get("/accounts/edit/:account_id", accountController.getAccountEditView);
 app.post("/accounts/edit", accountController.updateAccount);
+// transactions views
+app.get("/transactions", viewController.transactions);
+app.get("/transactions/new", viewController.createTransaction);
+// transactions action endpoints
+app.get("/transactions/delete/:transaction_id", transactionController.delete);
+app.post("/transactions/new", transactionController.create);
 // bind to port and run functions
 app.listen(PORT || 5000, IP || "0.0.0.0", () => {
   init.logging();

@@ -17,17 +17,22 @@ $(document).ready(() => {
           $("#name-label").text(`Account Name`).css("color", "");
           $("#accountno-label").text(`Account Number`).css("color", "");
           $("#sortcode-label").text(`Account Sort code`).css("color", "");
+          $("#balance-label").text(`Balance`).css("color", "");
           if (err.type == "name") {
             $("#name-label")
               .text(`Account Name - ${err.message}`)
               .css("color", "red");
-          } else if (err.type == "accountno") {
+          } else if (err.type == "account number") {
             $("#accountno-label")
               .text(`Account Number - ${err.message}`)
               .css("color", "red");
-          } else if (err.type == "sortcode") {
+          } else if (err.type == "sort code") {
             $("#sortcode-label")
               .text(`Account Sort Code - ${err.message}`)
+              .css("color", "red");
+          } else if (err.type == "balance") {
+            $("#balance-label")
+              .text(`Balance - ${err.message}`)
               .css("color", "red");
           }
         },

@@ -20,35 +20,55 @@
 </head>
 
 <body>
-    <%- include('common/header'); -%>
+    <%- include("../common/header"); -%>
 	<div class="container col-md-4 col-md-offset-4 form-card text-center">
 		<div>
-			<h2>Profile Details for <%- user.name -%></h1>
+			<h2>Profile Details for <%- user.name -%></h2>
 		</div>
 		<div>
 				<table class="table table-hover text-center">
 					<tr>
-						<td>Name </td>
+						<td>Name</td>
 						<td>
 							<%= user.name %>
 						</td>
 					</tr>
 					<tr>
-						<td>Email </td>
+						<td>Email</td>
 						<td>
 							<%= user.email %>
 						</td>
 					</tr>
 					<tr>
-						<td>Verified </td>
+						<td>Verified</td>
 						<td>
 							<%= user.verified %>
 						</td>
 					</tr>
 					<tr>
-						<td>Joined </td>
+						<td>Joined</td>
 						<td>
 							<%= user.created_at %>
+						</td>
+					</tr>
+					<tr>
+						<td>Accounts</td>
+						<td>
+							<%= accounts %>
+						</td>
+					</tr>
+					<tr>
+						<td>Transactions</td>
+						<td>
+							<%= transactions %>
+						</td>
+					</tr>
+					<tr>
+						<td>
+							<a  href="/close" class="btn btn-danger btn-xs"><span class="glyphicon glyphicon-remove"></span> Close Account</a>
+						</td>
+						<td>
+							<a  href="/update" class="btn btn-primary btn-xs"><span class="glyphicon glyphicon-remove"></span> Update Details</a>
 						</td>
 					</tr>
 				</table>

@@ -16,6 +16,7 @@ const password = process.argv[4];
 
 async function main() {
   let count = await User.find({}).countDocuments();
+  if (count === 0) count = -1;
   const user = new User({
     user_id: count + 1,
     name: name,

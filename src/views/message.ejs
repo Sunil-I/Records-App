@@ -18,21 +18,18 @@
     />
   </head>
   <body>
-    <%- include('common/header'); -%>
+    <%- include("common/header"); -%>
 
-    <main role="main">
+    <main>
       <section class="jumbotron text-center">
         <div class="container">
             <% if(message) { %>
-                <h2 id="message"><%= message%></h2>
+                <h1 id="message"><%= message%></h1>
                 <%   
             }%>
         </div>
       </section>
-        </div>
-      </div>
     </main>
-
-    <!-- <%- include('common/footer') -%> -->
+    <!-- <%- include("common/footer") -%> -->
   </body>
 </html>
