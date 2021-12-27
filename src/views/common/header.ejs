@@ -1,4 +1,8 @@
- <header>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" defer> </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" defer></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" defer></script>
+
+<header>
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
       <a class="navbar-brand" href="/"> Records App </a>
       <div class="navbar">
@@ -9,7 +13,16 @@
 
           <% if(user.name) { %>
            <a class="nav-link text-dark" href="/accounts">Accounts</a>
-           <a class="nav-link text-dark" href="/transactions"> Transactions</a>
+           
+           <div class="dropdown show">
+            <a class="nav-link text-dark dropdown-toggle" href="/transactions" id="transactionMenu" data-toggle="dropdown" >
+              Transactions
+            </a>
+            <div class="dropdown-menu">
+              <a class="dropdown-item" href="/transaction/new">Create new transaction</a>
+            </div>
+          </div>
+
            <a class="nav-link text-dark" href="/profile"> Profile</a>
            <a class="nav-link text-dark" href="https://umami.proxied.cloud/share/5GLuc1cG/com519"> Analytics</a>
            <a class="nav-link text-dark" href="/logout" > <%= user.email %> (Logout) </a> <%

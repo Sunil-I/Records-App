@@ -33,7 +33,6 @@ exports.editAccount = async (req, res) => {
   });
 };
 
-
 exports.viewAccount = async (req, res) => {
   const { account_id } = req.params;
   const { user_id } = req.session;
@@ -56,7 +55,6 @@ exports.viewAccount = async (req, res) => {
     user: req.session,
   });
 };
-
 
 exports.createAccount = async (req, res) => {
   if (

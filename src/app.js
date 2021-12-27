@@ -67,7 +67,7 @@ app.get("/verify/:hash", viewController.verify);
 app.get("/accounts/", viewController.accounts);
 app.get("/accounts/new", viewController.createAccount);
 app.get("/accounts/edit/:account_id", viewController.editAccount);
-app.get("/accounts/view/:account_id", viewController.viewAccount)
+app.get("/accounts/view/:account_id", viewController.viewAccount);
 // account action endpoints
 app.get("/accounts/delete/:account_id", accountController.delete);
 app.post("/accounts/new", accountController.create);
