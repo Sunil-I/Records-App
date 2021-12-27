@@ -12,10 +12,17 @@
           </a>
 
           <% if(user.name) { %>
-           <a class="nav-link text-dark" href="/accounts">Accounts</a>
-           
+            <div class="dropdown show">
+              <a class="nav-link text-dark dropdown-toggle" href="/accounts" data-toggle="dropdown" >
+                Accounts
+              </a>
+              <div class="dropdown-menu">
+                <a class="dropdown-item" href="/accounts/new">Create new account</a>
+              </div>
+            </div>
+             
            <div class="dropdown show">
-            <a class="nav-link text-dark dropdown-toggle" href="/transactions" id="transactionMenu" data-toggle="dropdown" >
+            <a class="nav-link text-dark dropdown-toggle" href="/transactions" data-toggle="dropdown" >
               Transactions
             </a>
             <div class="dropdown-menu">
