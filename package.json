@@ -4,7 +4,7 @@
   "description": "create, test, and deploy, a proof of concept data-driven full stack web-application",
   "main": "index.js",
   "scripts": {
-    "start": "node .",
+    "start": "NODE_ENV=production node .",
     "lint": "prettier --write .",
     "test": "mocha tests/*"
   },
