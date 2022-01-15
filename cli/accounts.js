@@ -1,6 +1,7 @@
 const init = require("../lib/Initialization");
 const Account = require("../lib/models/Account");
 const faker = require("faker");
+const { database } = require("faker/locale/de_CH");
 
 require("dotenv").config({
   path: process.env.NODE_ENV === "production" ? ".env" : "dev.env",
@@ -20,6 +21,7 @@ async function main() {
   count = count + 1;
   let name = faker.finance.accountName();
   let balance = faker.finance.amount();
+  const date = faker.date.between("2015-01-01", "2022-01-01").toISOString();
   const account = new Account({
     account_id: count,
     user_id: args[2],
@@ -27,6 +29,7 @@ async function main() {
     balance: balance,
     accountno: faker.finance.routingNumber(),
     sortcode: faker.finance.routingNumber(),
+    createdAt: date
   });
   out.push(account);
   return console.log(

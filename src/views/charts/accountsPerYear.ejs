@@ -1,0 +1,46 @@
+<script>
+    new Chart(document.getElementById("accountsPerYear"), {
+      type: "bar",
+      data: {
+        labels: [<%= Object.keys(yearlyAccounts) %>],
+        datasets: [
+          {
+            label: "Accounts made",
+            backgroundColor: [
+              "rgba(255, 99, 132, 0.2)",
+              "rgba(255, 159, 64, 0.2)",
+              "rgba(255, 205, 86, 0.2)",
+              "rgba(75, 192, 192, 0.2)",
+              "rgba(54, 162, 235, 0.2)",
+              "rgba(153, 102, 255, 0.2)",
+              "rgba(10, 30, 255, 0.2)",
+              "rgba(201, 30, 255, 0.2)",
+              "rgba(99, 159, 64, 0.2)",
+              "rgba(255, 20, 36, 0.2)",
+              "rgba(53, 22, 123, 0.2)",
+              "rgba(100, 100, 150, 0.2)",
+            ],
+            data: [<%= Object.values(yearlyAccounts) %>],
+          },
+        ],
+      },
+      options: {
+        legend: { display: false },
+        title: {
+          display: true,
+          text: "Total accounts made per year",
+        },
+        scales: {
+            yAxes: [{
+              ticks: {
+               beginAtZero: true
+              },
+              scaleLabel: {
+                display: true,
+                labelString: 'accounts made'
+              }
+            }]
+          }
+      },
+    });
+ </script>

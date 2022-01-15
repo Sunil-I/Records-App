@@ -14,6 +14,7 @@ const viewController = require("./controllers/viewController");
 const userController = require("./controllers/userController");
 const accountController = require("./controllers/accountController");
 const transactionController = require("./controllers/transactionController");
+const visualizationsController = require("./controllers/visualizationsController");
 // enable sentry logging for production only
 if ((NODE_ENV = "production")) app.use(sentry.Handlers.requestHandler());
 // hide express is running from scrapers
@@ -78,6 +79,9 @@ app.get("/transactions/new", viewController.createTransaction);
 // transactions action endpoints
 app.get("/transactions/delete/:transaction_id", transactionController.delete);
 app.post("/transactions/new", transactionController.create);
+// summary
+app.get("/summary/transactions", visualizationsController.transactions);
+app.get("/summary/accounts", visualizationsController.accounts);
 // bind to port and run functions
 app.listen(PORT || 5000, IP || "0.0.0.0", () => {
   init.logging();

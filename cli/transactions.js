@@ -28,7 +28,7 @@ async function main() {
   // variables
   const type = Math.random() < 0.5 ? "deposit" : "withdrawal";
   const amount = parseFloat(faker.finance.amount());
-  const date = faker.date.between("2020-01-01", "2022-01-01").toISOString();
+  const date = faker.date.between("2015-01-01", "2022-01-01").toISOString();
   // if this transaction leads to the balance being 0 skip it
   if (account_balance - amount < 0 && type == "withdrawal")
     return console.log(
