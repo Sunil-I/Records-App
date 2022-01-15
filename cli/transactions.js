@@ -4,6 +4,8 @@ const Account = require("../lib/models/Account");
 // import modules
 const faker = require("faker");
 const init = require("../lib/Initialization");
+const { customAlphabet  } = require("nanoid")
+const nanoid  = customAlphabet('1234567890abcdefghijklmnopqrstuvwxyz', 10)
 // setup enviroment
 require("dotenv").config({
   path: process.env.NODE_ENV === "production" ? ".env" : "dev.env",
@@ -38,7 +40,6 @@ async function main() {
         Number(account_balance - amount).toFixed(2)
       )}`
     );
-  count = count + 1;
   // update account_balance
   if (type == "deposit")
     account_balance = parseFloat(Number(account_balance + amount).toFixed(2));
@@ -46,7 +47,7 @@ async function main() {
     account_balance = parseFloat(Number(account_balance - amount).toFixed(2));
   // make transaction
   const transaction = new Transaction({
-    transaction_id: count,
+    transaction_id: nanoid(),
     account_name: account_name,
     account_id: args[2],
     type: type,
@@ -64,9 +65,6 @@ async function main() {
 }
 
 init.db().then(async () => {
-  // database queries
-  count = await Transaction.find({}).countDocuments();
-  if (count === 0) count = -1;
   query = await Account.findOne({ account_id: args[2] });
   // if account doesn't exist
   if (!query) {

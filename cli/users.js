@@ -2,11 +2,13 @@ const init = require("../lib/Initialization");
 const User = require("../lib/models/User");
 const faker = require("faker");
 const bcrypt = require("bcrypt");
+const { customAlphabet  } = require("nanoid")
+const nanoid  = customAlphabet('1234567890abcdefghijklmnopqrstuvwxyz', 10)
+
 require("dotenv").config({
   path: process.env.NODE_ENV === "production" ? ".env" : "dev.env",
 });
 
-let count;
 let i;
 let out = [];
 
@@ -15,13 +17,12 @@ if (args.length !== 3)
   return console.log("Command Syntax: node cli/users <number of accounts>");
 
 async function main() {
-  count = count + 1;
   let name = faker.name.findName();
   let email = faker.internet.email();
   let password = faker.internet.password();
 
   const user = new User({
-    user_id: count,
+    user_id: nanoid(),
     name: name,
     email: email,
     password: bcrypt.hashSync(
@@ -45,8 +46,6 @@ async function main() {
 }
 
 init.db().then(async () => {
-  count = await User.find({}).countDocuments();
-  if (count === 0) count = -1;
   for (i = 0; i < args[2]; i++) main();
   User.insertMany(out)
     .then((r) =>
