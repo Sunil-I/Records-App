@@ -1,7 +1,7 @@
 const init = require("../lib/Initialization");
 const Account = require("../lib/models/Account");
+const User = require("../lib/models/User");
 const faker = require("faker");
-const { database } = require("faker/locale/de_CH");
 const { customAlphabet } = require("nanoid");
 const nanoid = customAlphabet("1234567890abcdefghijklmnopqrstuvwxyz", 10);
 require("dotenv").config({
@@ -13,18 +13,18 @@ let i;
 let out = [];
 
 const args = process.argv;
-if (args.length !== 4)
+if (args.length !== 3)
   return console.log(
-    "Command Syntax: node cli/accounts <user id> <number of accounts>"
+    "Command Syntax: node cli/multiAccounts <number of accounts>"
   );
 
-async function main() {
+async function main(id) {
   let name = faker.finance.accountName();
   let balance = faker.finance.amount();
   const date = faker.date.between("2015-01-01", "2022-01-01").toISOString();
   const account = new Account({
     account_id: nanoid(),
-    user_id: args[2],
+    user_id: id,
     name: name,
     balance: balance,
     accountno: faker.finance.routingNumber(),
@@ -34,13 +34,17 @@ async function main() {
   out.push(account);
   return console.log(
     `[${i + 1}/${
-      args[3]
+      args[2]
     }] Account ${name} created with a balance of ${balance}.`
   );
 }
 
 init.db().then(async () => {
-  for (i = 0; i < args[3]; i++) main();
+  const users = await User.find({});
+  users.forEach((e) => {
+    for (i = 0; i < args[2]; i++) main(e.user_id);
+  });
+
   Account.insertMany(out)
     .then((r) =>
       console.log(

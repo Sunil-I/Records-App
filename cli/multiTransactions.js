@@ -13,21 +13,20 @@ require("dotenv").config({
 });
 
 // globals
-let count;
 let i;
 let out = [];
 let account_name;
 let account_balance;
-let query;
+let acc;
 // argument parsing
 const args = process.argv;
-if (args.length !== 4)
+if (args.length !== 3)
   return console.log(
-    "Command Syntax: node cli/transactions <account id> <number of transactions>"
+    "Command Syntax: node cli/multiTransactions <number of transactions>"
   );
 
 // main function
-async function main() {
+async function main(id) {
   // variables
   const type = Math.random() < 0.5 ? "deposit" : "withdrawal";
   const amount = parseFloat(faker.finance.amount());
@@ -36,7 +35,7 @@ async function main() {
   if (account_balance - amount < 0 && type == "withdrawal")
     return console.log(
       `[${i + 1}/${
-        args[3]
+        args[2]
       }] withdrawal for account ${account_name} skipped due to negative balance ${parseFloat(
         Number(account_balance - amount).toFixed(2)
       )}`
@@ -50,7 +49,7 @@ async function main() {
   const transaction = new Transaction({
     transaction_id: nanoid(),
     account_name: account_name,
-    account_id: args[2],
+    account_id: id,
     type: type,
     amount: amount,
     balance: account_balance,
@@ -60,31 +59,24 @@ async function main() {
   out.push(transaction);
   return console.log(
     `[${i + 1}/${
-      args[3]
+      args[2]
     }] ${type} of £${amount} for account "${account_name}" created balance is now £${account_balance}.`
   );
 }
 
 init.db().then(async () => {
-  query = await Account.findOne({ account_id: args[2] });
-  // if account doesn't exist
-  if (!query) {
-    console.log("Account doesn't exist!");
-    process.exit(1);
-  }
-  // set globals
-  account_name = query.name;
-  account_balance = parseFloat(query.balance);
-  // loop
-  for (i = 0; i < args[3]; i++) main();
+  acc = await Account.find({});
+  acc.forEach((e) => {
+    account_name = e.name;
+    account_balance = parseFloat(e.balance);
+    for (i = 0; i < args[2]; i++) main(e.account_id);
+    e.balance = account_balance;
+  });
+  Account.bulkSave(acc);
   Transaction.insertMany(out)
-    .then((r) =>
-      console.log(
+    .then(
+      (r) =>
         `[Runner] Sucessfully Inserted ${r.length} transactions to the database.`
-      )
     )
-    .then(() => {
-      query.balance = account_balance;
-      query.save().then(() => process.exit(1));
-    });
+    .then(() => process.exit(1));
 });
