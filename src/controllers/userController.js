@@ -87,6 +87,8 @@ exports.create = async (req, res) => {
     // handle edge case of user db being empty!
     const user = new User({
       user_id: nanoid(),
+    const user = new User({
+      user_id: user_id,
       name: name,
       email: email,
       password: await bcrypt.hash(

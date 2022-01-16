@@ -3,7 +3,6 @@ const Transaction = require("../../lib/models/Transaction");
 const Validation = require("../../lib/Validation");
 const { customAlphabet  } = require("nanoid")
 const nanoid  = customAlphabet('1234567890abcdefghijklmnopqrstuvwxyz', 10)
-
 exports.create = async (req, res) => {
   const { user_id } = req.session;
   const { name, accountno, sortcode, balance } = req.body;
@@ -71,7 +70,6 @@ exports.create = async (req, res) => {
       message: validation_fields[0].message,
       type: validation_fields[0].name,
     });
-  // count accounts + handle edge case of 0 accounts
   let account_id = nanoid();
   const account = new Account({
     account_id: account_id,
