@@ -8,8 +8,8 @@ const nodemailer = require("nodemailer");
 const fs = require("fs");
 const path = require("path");
 const Validation = require("../../lib/Validation");
-const { customAlphabet  } = require("nanoid")
-const nanoid  = customAlphabet('1234567890abcdefghijklmnopqrstuvwxyz', 10)
+const { customAlphabet } = require("nanoid");
+const nanoid = customAlphabet("1234567890abcdefghijklmnopqrstuvwxyz", 10);
 
 // logout user
 exports.logout = (req, res) => {
@@ -87,8 +87,6 @@ exports.create = async (req, res) => {
     // handle edge case of user db being empty!
     const user = new User({
       user_id: nanoid(),
-    const user = new User({
-      user_id: user_id,
       name: name,
       email: email,
       password: await bcrypt.hash(

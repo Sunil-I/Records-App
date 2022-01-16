@@ -2,8 +2,8 @@ const init = require("../lib/Initialization");
 const User = require("../lib/models/User");
 const faker = require("faker");
 const bcrypt = require("bcrypt");
-const { customAlphabet  } = require("nanoid")
-const nanoid  = customAlphabet('1234567890abcdefghijklmnopqrstuvwxyz', 10)
+const { customAlphabet } = require("nanoid");
+const nanoid = customAlphabet("1234567890abcdefghijklmnopqrstuvwxyz", 10);
 
 require("dotenv").config({
   path: process.env.NODE_ENV === "production" ? ".env" : "dev.env",

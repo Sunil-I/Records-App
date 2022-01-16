@@ -2,8 +2,8 @@ const init = require("../lib/Initialization");
 const Account = require("../lib/models/Account");
 const faker = require("faker");
 const { database } = require("faker/locale/de_CH");
-const { customAlphabet  } = require("nanoid")
-const nanoid  = customAlphabet('1234567890abcdefghijklmnopqrstuvwxyz', 10)
+const { customAlphabet } = require("nanoid");
+const nanoid = customAlphabet("1234567890abcdefghijklmnopqrstuvwxyz", 10);
 require("dotenv").config({
   path: process.env.NODE_ENV === "production" ? ".env" : "dev.env",
 });
@@ -22,14 +22,14 @@ async function main() {
   let name = faker.finance.accountName();
   let balance = faker.finance.amount();
   const date = faker.date.between("2015-01-01", "2022-01-01").toISOString();
-    const account = new Account({
+  const account = new Account({
     account_id: nanoid(),
     user_id: args[2],
     name: name,
     balance: balance,
     accountno: faker.finance.routingNumber(),
     sortcode: faker.finance.routingNumber(),
-    createdAt: date
+    createdAt: date,
   });
   out.push(account);
   return console.log(

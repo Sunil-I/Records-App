@@ -1,8 +1,8 @@
 const Transaction = require("../../lib/models/Transaction");
 const Account = require("../../lib/models/Account");
 const Validation = require("../../lib/Validation");
-const { customAlphabet  } = require("nanoid")
-const nanoid  = customAlphabet('1234567890abcdefghijklmnopqrstuvwxyz', 10)
+const { customAlphabet } = require("nanoid");
+const nanoid = customAlphabet("1234567890abcdefghijklmnopqrstuvwxyz", 10);
 
 exports.create = async (req, res) => {
   const { user_id } = req.session;
@@ -81,7 +81,6 @@ exports.create = async (req, res) => {
   if (type == "withdrawal")
     account_balance = parseFloat(Number(account_balance - amount).toFixed(2));
   // handle edge case of where database is empty
-  query.balance = account_balance;
   query.balance = account_balance;
   const transaction = new Transaction({
     transaction_id: nanoid(),
