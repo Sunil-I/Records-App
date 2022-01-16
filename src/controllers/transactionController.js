@@ -1,6 +1,9 @@
 const Transaction = require("../../lib/models/Transaction");
 const Account = require("../../lib/models/Account");
 const Validation = require("../../lib/Validation");
+const { customAlphabet  } = require("nanoid")
+const nanoid  = customAlphabet('1234567890abcdefghijklmnopqrstuvwxyz', 10)
+
 exports.create = async (req, res) => {
   const { user_id } = req.session;
   const { id, type, amount } = req.body;
@@ -36,11 +39,6 @@ exports.create = async (req, res) => {
     });
   const validation_fields = Validation.validate([
     {
-      name: "account id",
-      value: id,
-      type: "number",
-    },
-    {
       name: "amount",
       value: amount,
       type: "float",
@@ -54,7 +52,7 @@ exports.create = async (req, res) => {
       type: validation_fields[0].name,
     });
   const query = await Account.findOne({ account_id: id });
-  const count = await Transaction.find({}).countDocuments();
+
   if (!query)
     return res.status(400).json({
       success: false,
@@ -83,11 +81,10 @@ exports.create = async (req, res) => {
   if (type == "withdrawal")
     account_balance = parseFloat(Number(account_balance - amount).toFixed(2));
   // handle edge case of where database is empty
-  let transaction_id = count + 1;
-  if (count == 0) transaction_id = 0;
+  query.balance = account_balance;
   query.balance = account_balance;
   const transaction = new Transaction({
-    transaction_id: transaction_id,
+    transaction_id: nanoid(),
     account_id: id,
     account_name: query.name,
     type: type,

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+   <head>
+      <meta charset="utf-8" />
+      <meta
+         name="viewport"
+         content="width=device-width, initial-scale=1, shrink-to-fit=no"
+         />
+      <meta name="description" content="data-driven full-stack web-application" />
+      <title>Transactions Summary</title>
+      <!-- Bootstrap core CSS -->
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css">
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"></script>
+   </head>
+   <body>
+      <%- include("../common/header"); -%>
+      <div class="container">
+         <div>
+            <h2 class="text-center">Transactions per month</h2>
+            <canvas id="transactionsPerMonth"></canvas>
+            <h2 class="text-center">Transactions per year</h2>
+            <canvas id="transactionsPerYear"></canvas>
+            <h2 class="text-center">Withdrawals per month</h2>
+            <canvas id="withdrawalsPerMonth"></canvas>
+            <h2 class="text-center">Withdrawals per year</h2>
+            <canvas id="withdrawalsPerYear"></canvas>
+            <h2 class="text-center">Deposits per month</h2>
+            <canvas id="depositsPerMonth"></canvas>
+            <h2 class="text-center">Deposits per year</h2>
+            <canvas id="depositsPerYear"></canvas>
+ 
+
+
+            <%- include("../charts/depositsPerMonth") -%>
+            <%- include("../charts/transactionsPerMonth") -%>
+            <%- include("../charts/withdrawalsPerMonth") -%>
+            <%- include("../charts/transactionsPerYear") -%>
+            <%- include("../charts/depositsPerYear") -%>
+            <%- include("../charts/withdrawalsPerYear") -%>
+
+         </div>
+      </div>
+      <%- include("../common/footer") -%>
+   </body>
+</html>

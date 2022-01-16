@@ -1,0 +1,62 @@
+<script>
+    new Chart(document.getElementById("withdrawalsPerMonth"), {
+      type: "bar",
+      data: {
+        labels: [
+          "January",
+          "February",
+          "March",
+          "April",
+          "May",
+          "June",
+          "July",
+          "August",
+          "September",
+          "October",
+          "November",
+          "December",
+        ],
+        datasets: [
+          {
+            label: "Cash withdrawn",
+            backgroundColor: [
+              "rgba(255, 99, 132, 0.2)",
+              "rgba(255, 159, 64, 0.2)",
+              "rgba(255, 205, 86, 0.2)",
+              "rgba(75, 192, 192, 0.2)",
+              "rgba(54, 162, 235, 0.2)",
+              "rgba(153, 102, 255, 0.2)",
+              "rgba(10, 30, 255, 0.2)",
+              "rgba(201, 30, 255, 0.2)",
+              "rgba(99, 159, 64, 0.2)",
+              "rgba(255, 20, 36, 0.2)",
+              "rgba(53, 22, 123, 0.2)",
+              "rgba(100, 100, 150, 0.2)",
+            ],
+            data: [<%= monthlyWithdrawals %>],
+          },
+        ],
+      },
+      options: {
+        legend: { display: false },
+        title: {
+          display: true,
+          text: "Total withdrawal amounts per month",
+        },
+        scales: {
+            yAxes: [{
+              ticks: {
+                callback: function(value, index, values) {
+                 return value.toLocaleString("en-GB",{style:"currency", currency:"GBP"})
+               },
+               beginAtZero: true
+              },
+              scaleLabel: {
+                display: true,
+                labelString: 'withdrawal amounts'
+              }
+            }]
+          }
+      },
+    });
+ </script>

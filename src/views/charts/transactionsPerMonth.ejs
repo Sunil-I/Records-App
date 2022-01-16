@@ -1,0 +1,46 @@
+<script>
+    new Chart(document.getElementById("transactionsPerMonth"), {
+      type: "line",
+      data: {
+        labels: [
+          "January",
+          "February",
+          "March",
+          "April",
+          "May",
+          "June",
+          "July",
+          "August",
+          "September",
+          "October",
+          "November",
+          "December",
+        ],
+        datasets: [
+          {
+            label: "Transactions",
+            borderColor: 'rgb(75, 192, 192)',
+            data: [<%= monthlyTransactions %>],
+          },
+        ],
+      },
+      options: {
+        legend: { display: false },
+        title: {
+          display: true,
+          text: "Transactions per month",
+        },
+        scales: {
+          yAxes: [{
+            scaleLabel: {
+              display: true,
+              labelString: 'Transactions made'
+            },
+            ticks: {
+             beginAtZero: true
+            },
+          }]
+        }
+      },
+    });
+ </script>

@@ -8,6 +8,8 @@ const nodemailer = require("nodemailer");
 const fs = require("fs");
 const path = require("path");
 const Validation = require("../../lib/Validation");
+const { customAlphabet  } = require("nanoid")
+const nanoid  = customAlphabet('1234567890abcdefghijklmnopqrstuvwxyz', 10)
 
 // logout user
 exports.logout = (req, res) => {
@@ -68,8 +70,6 @@ exports.create = async (req, res) => {
       });
     // find email in database
     const query = await User.findOne({ email: email });
-    // check how many users we already have
-    const count = await User.find({}).countDocuments();
     // if email exists reject with 400
     if (query)
       return res.status(400).json({
@@ -85,8 +85,8 @@ exports.create = async (req, res) => {
       });
     // create user with a generated salt or make a random one with a unique user id
     // handle edge case of user db being empty!
-    let user_id = count + 1;
-    if (count == 0 || !count) user_id = 0;
+    const user = new User({
+      user_id: nanoid(),
     const user = new User({
       user_id: user_id,
       name: name,

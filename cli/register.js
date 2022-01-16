@@ -1,6 +1,8 @@
 const init = require("../lib/Initialization");
 const User = require("../lib/models/User");
 const bcrypt = require("bcrypt");
+const { customAlphabet  } = require("nanoid")
+const nanoid  = customAlphabet('1234567890abcdefghijklmnopqrstuvwxyz', 10)
 require("dotenv").config({
   path: process.env.NODE_ENV === "production" ? ".env" : "dev.env",
 });
@@ -15,10 +17,8 @@ const email = process.argv[3];
 const password = process.argv[4];
 
 async function main() {
-  let count = await User.find({}).countDocuments();
-  if (count === 0) count = -1;
   const user = new User({
-    user_id: count + 1,
+    user_id: nanoid(),
     name: name,
     email: email,
     password: await bcrypt.hash(
