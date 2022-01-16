@@ -376,3 +376,163 @@ exports.sendVerifyMail = async (user) => {
   });
   return mail;
 };
+
+exports.sendResetPasswordMail = async (user) => {
+  let transporter = nodemailer.createTransport({
+    host: process.env.MAIL_HOST,
+    port: process.env.MAIL_PORT,
+    secure: process.env.MAIL_SECURE, // true for 465, false for other ports
+    auth: {
+      user: process.env.MAIL_USERNAME,
+      pass: process.env.MAIL_PASSWORD,
+    },
+  });
+
+  function generateText(user) {
+    let template = fs.readFileSync(
+      path.join(__dirname, "..", "..", "lib", "templates", "reset.txt"),
+      "utf8"
+    );
+    return template
+      .replace("{NAME}", user.name)
+      .replace("{BASE_URL}", process.env.BASE_URL)
+      .replace(
+        "{RESET_URL}",
+        `${process.env.BASE_URL}reset-password/${user.password_reset_hash}`
+      )
+      .replace(
+        "{RESET_URL}",
+        `${process.env.BASE_URL}reset-password/${user.password_reset_hash}`
+      );
+  }
+
+  function generateHTML(user) {
+    let template = fs.readFileSync(
+      path.join(__dirname, "..", "..", "lib", "templates", "reset.html"),
+      "utf8"
+    );
+    return template
+      .replace("{NAME}", user.name)
+      .replace("{BASE_URL}", process.env.BASE_URL)
+      .replace(
+        "{RESET_URL}",
+        `${process.env.BASE_URL}reset-password/${user.password_reset_hash}`
+      )
+      .replace(
+        "{RESET_URL}",
+        `${process.env.BASE_URL}reset-password/${user.password_reset_hash}`
+      );
+  }
+
+  let mail = await transporter.sendMail({
+    from: process.env.MAIL_FROM,
+    to: user.email,
+    subject: "Reset your password.",
+    text: generateText(user),
+    html: generateHTML(user),
+  });
+  return mail;
+};
+
+exports.findResetEmail = async (req, res) => {
+  const { email } = req.body;
+  const body_validation = Validation.body([
+    {
+      name: "email",
+      value: email,
+    },
+  ]);
+  if (body_validation.length)
+    return res.status(400).json({
+      success: false,
+      message: `${body_validation[0]} was not sent.`,
+    });
+
+  // validate data sent
+  const validation_fields = Validation.validate([
+    {
+      name: "email",
+      value: email,
+      type: "email",
+    },
+  ]);
+  // if validation failed
+  if (validation_fields.length)
+    return res.status(400).json({
+      success: false,
+      message: validation_fields[0].message,
+      type: validation_fields[0].name,
+    });
+  // find email in database
+  const query = await User.findOne({ email });
+  if (!query)
+    return res.status(404).json({
+      success: false,
+      message: "This email is not registered!",
+      type: "email",
+    });
+  query.password_reset_hash = Array.from(Array(20), () =>
+    Math.floor(Math.random() * 36).toString(36)
+  ).join("");
+  await query.save();
+  await this.sendResetPasswordMail(query);
+  return res.status(200).json({ success: true, message: "Sent email!" });
+};
+
+exports.reset = async (req, res) => {
+  const { token, password } = req.body;
+
+  const body_validation = Validation.body([
+    {
+      name: "token",
+      value: token,
+    },
+    {
+      name: "password",
+      value: password,
+    },
+  ]);
+  if (body_validation.length)
+    return res.status(400).json({
+      success: false,
+      message: `${body_validation[0]} was not sent.`,
+    });
+
+  // validate data sent
+  const validation_fields = Validation.validate([
+    {
+      name: "password",
+      value: password,
+      type: "password",
+    },
+  ]);
+  // if validation failed
+  if (validation_fields.length)
+    return res.status(400).json({
+      success: false,
+      message: validation_fields[0].message,
+      type: validation_fields[0].name,
+    });
+
+  const query = await User.findOne({ password_reset_hash: token });
+  if (!query)
+    return res
+      .status(404)
+      .json({ success: false, message: "Token is invalid", type: "token" });
+
+  query.password = await bcrypt.hash(
+    password,
+    process.env.SALT || (await bcrypt.genSalt(10))
+  );
+  query.password_reset_hash = undefined;
+
+  await query.save();
+
+  // set info
+  req.session.user_id = query.user_id;
+  req.session.email = query.email;
+  req.session.name = query.name;
+  req.session.verified = query.verified;
+  req.session.created_at = query.createdAt;
+  return res.status(200).json({ success: true, message: "Password reset!" });
+};

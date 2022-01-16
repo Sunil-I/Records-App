@@ -62,6 +62,11 @@ app.post("/update", userController.update);
 app.get("/logout", userController.logout);
 // profile
 app.get("/profile", viewController.profile);
+// forget password
+app.get("/forgot-password", viewController.forget);
+app.post("/forget-password", userController.findResetEmail);
+app.get("/reset-password/:token", viewController.reset);
+app.post("/reset-password", userController.reset);
 // verify view
 app.get("/verify/:hash", viewController.verify);
 // account views

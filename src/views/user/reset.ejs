@@ -7,15 +7,15 @@
         content="width=device-width, initial-scale=1, shrink-to-fit=no"
       />
       <meta name="description" content="data-driven full-stack web-application" />
-      <title>Login</title>
+      <title>Reset Password</title>
       <!-- Custom CSS -->
       <link rel="stylesheet" href="/css/custom-floating-styles.css"/>
       <!-- Bootstrap core CSS -->
       <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css" media="print" onload="this.media='all'; this.onload=null;">
       <!-- ajax -->
       <script src="https://code.jquery.com/jquery-3.6.0.min.js" defer> </script>
-      <!-- login js -->
-      <script src="/js/login.js" defer> </script>
+      <!-- forget js -->
+      <script src="/js/reset.js" defer> </script>
 
     
     </head>
@@ -30,36 +30,18 @@
               </div>
               <div class="card fat">
                 <div class="card-body">
-                  <h4 class="card-title">Login</h4>
-                  <form class="form-signin" method="POST" id="login-form">
+                  <h4 class="card-title text-center">Reset Password</h4>
+                  <form class="form-signin" method="POST" id="reset-password-form">
                     <div class="form-group">
-                      <label for="email" id="email-label">Email Address</label>
-                      <input id="email" type="email" class="form-control" name="email" autocomplete="email" required autofocus>
-                    </div>
-    
-                    <div class="form-group">
-                      <label for="password" id="password-label">Password
-                        <a href="/forgot-password" class="float-right color-primary">
-                          Forgotten your password?
-                        </a>
-                      </label>
-                      <input id="password" type="password" class="form-control" name="password" autocomplete="current-password" required>
-                    </div>
-    
-                    <div class="form-group">
-                      <div class="custom-checkbox custom-control">
-                        <input type="checkbox" name="remember" id="remember" class="custom-control-input">
-                        <label for="remember" class="custom-control-label">Remember Me</label>
-                      </div>
+                      <label for="passwod" id="password-label">Password</label>
+                      <input id="password" type="password" class="form-control" name="password" required autofocus>
+                      <input id="token" type="hidden" class="form-control" name="token" value="<%= token %>">
                     </div>
     
                     <div class="form-group m-0">
                       <button type="submit" class="btn btn-primary btn-block color-dark">
-                        Login
+                        Reset Password
                       </button>
-                    </div>
-                    <div class="mt-4 text-center">
-                      Don't have an account? <a class="color-primary" href="/register">Create One</a>
                     </div>
                   </form>
                 </div>

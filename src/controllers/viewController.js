@@ -1,7 +1,7 @@
 const Account = require("../../lib/models/Account");
 const User = require("../../lib/models/User");
 const Transaction = require("../../lib/models/Transaction");
-
+const bcrypt = require("bcrypt");
 // home page
 exports.home = (req, res) => {
   res.render("index", {
@@ -263,5 +263,29 @@ exports.createTransaction = async (req, res) => {
     });
   return res.render("create/transaction", {
     user: req.session,
+  });
+};
+
+exports.forget = (req, res) => {
+  return res.render("user/forget", {
+    user: req.session,
+  });
+};
+
+exports.reset = async (req, res) => {
+  if (!req.params.token)
+    return res.render("message", {
+      user: req.session,
+      message: "No token sent!",
+    });
+  const query = await User.findOne({ password_reset_hash: req.params.token });
+  if (!query)
+    return res.render("message", {
+      user: req.session,
+      message: "Token is not valid!",
+    });
+  return res.render("user/reset", {
+    user: req.session,
+    token: req.params.token,
   });
 };
