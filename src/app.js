@@ -93,6 +93,8 @@ app.get("/summary/accounts", visualizationsController.accounts);
 app.get("/admin", adminViewController.dashboard);
 app.get("/admin/transactions", adminViewController.transactions);
 app.get("/admin/accounts", adminViewController.accounts);
+app.get("/admin/accounts/view/:account_id", adminViewController.viewAccount);
+app.get("/admin/accounts/edit/:account_id", adminViewController.editAccount);
 app.get("/admin/users", adminViewController.users);
 app.get(
   "/admin/transactions/delete/:transaction_id",

@@ -2,7 +2,7 @@ const Transaction = require("../../lib/models/Transaction");
 const Account = require("../../lib/models/Account");
 const User = require("../../lib/models/User");
 
-// Dashboard view -> Transactions view -> Accounts view -> Users view
+// Dashboard view -> Transactions view -> Accounts view -> View Account -> Edit Account -> Users view
 
 exports.dashboard = async (req, res) => {
   if (
@@ -162,6 +162,69 @@ exports.accounts = async (req, res) => {
     q: "",
   });
 };
+
+
+exports.editAccount = async (req, res) => {
+    const { account_id } = req.params;
+    if (
+        typeof req.session.user_id === "undefined" ||
+        typeof req.session.user_id === "null"
+      )
+        return res.render("message", {
+          message: "Only authenticated users view this page!",
+          user: req.session,
+        });
+    
+      if (!req.session.isAdmin)
+        return res.render("message", {
+          user: req.session,
+          message: "Only admins can view this page!",
+        });
+
+    const query = await Account.findOne({
+      account_id: account_id,
+    });
+    if (!query)
+      return res.render("message", {
+        message: "This account does not exist!",
+        user: req.session,
+      });
+    return res.render("edit/admin/account", {
+      account: query,
+      user: req.session,
+    });
+  };
+  
+  exports.viewAccount = async (req, res) => {
+    const { account_id } = req.params;
+    if (
+        typeof req.session.user_id === "undefined" ||
+        typeof req.session.user_id === "null"
+      )
+        return res.render("message", {
+          message: "Only authenticated users view this page!",
+          user: req.session,
+        });
+    
+      if (!req.session.isAdmin)
+        return res.render("message", {
+          user: req.session,
+          message: "Only admins can view this page!",
+        });
+    const query = await Account.findOne({
+      account_id: account_id,
+    });
+    if (!query)
+      return res.render("message", {
+        message: "This account does not exist!",
+        user: req.session,
+      });
+    return res.render("view/admin/account", {
+      account: query,
+      user: req.session,
+    });
+  };
+
 
 exports.users = async (req, res) => {
   let { page } = req.query;
