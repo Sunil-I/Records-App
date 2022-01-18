@@ -10,13 +10,13 @@ exports.dashboard = async (req, res) => {
     typeof req.session.user_id === "null"
   )
     return res.render("message", {
-      message: "Only authenticated users can get transactions!",
+      message: "Only authenticated users can view this page!",
       user: req.session,
     });
   if (!req.session.isAdmin)
     return res.render("message", {
       user: req.session,
-      message: "Only admins can use this page!",
+      message: "Only admins can view this page!",
     });
   const transactions = await Transaction.find({}).limit(1500).lean();
 
@@ -74,14 +74,14 @@ exports.transactions = async (req, res) => {
     typeof req.session.user_id === "null"
   )
     return res.render("message", {
-      message: "Only authenticated users can get transactions!",
+      message: "Only authenticated users can view this page!",
       user: req.session,
     });
 
   if (!req.session.isAdmin)
     return res.render("message", {
       user: req.session,
-      message: "Only admins can use this page!",
+      message: "Only admins can view this page!",
     });
 
   // 10 results per page
@@ -127,14 +127,14 @@ exports.accounts = async (req, res) => {
     typeof req.session.user_id === "null"
   )
     return res.render("message", {
-      message: "Only authenticated users can get transactions!",
+      message: "Only authenticated users view this page!",
       user: req.session,
     });
 
   if (!req.session.isAdmin)
     return res.render("message", {
       user: req.session,
-      message: "Only admins can use this page!",
+      message: "Only admins can view this page!",
     });
 
   // 10 results per page
