@@ -67,3 +67,11 @@ node .
 - Staging instance mimics the production settings locally to ensure production is stable.
 
 - Production instance is completed features deployed live via heroku.
+
+# Demo Accounts
+
+The following accounts should be universally available on the hosted instances.
+
+- demo@example.com:demo
+- admin@example.com:admin
+- new@example.com:new

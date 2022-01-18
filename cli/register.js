@@ -8,19 +8,21 @@ require("dotenv").config({
 });
 
 const args = process.argv;
-if (args.length !== 5)
+if (args.length !== 6)
   return console.log(
-    'Command Syntax: node cli/register "<name>" <email> <password>'
+    'Command Syntax: node cli/register "<name>" <email> <password> <isAdmin>'
   );
 const name = process.argv[2];
 const email = process.argv[3];
 const password = process.argv[4];
+const admin = process.argv[5];
 
 async function main() {
   const user = new User({
     user_id: nanoid(),
     name: name,
     email: email,
+    isAdmin: admin,
     password: await bcrypt.hash(
       password,
       process.env.SALT || (await bcrypt.genSalt(10))

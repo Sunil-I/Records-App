@@ -89,6 +89,7 @@ exports.create = async (req, res) => {
       user_id: nanoid(),
       name: name,
       email: email,
+      isAdmin: false,
       password: await bcrypt.hash(
         password,
         process.env.SALT || (await bcrypt.genSalt(10))
@@ -108,6 +109,7 @@ exports.create = async (req, res) => {
     req.session.name = user.name;
     req.session.verified = user.verified;
     req.session.created_at = user.createdAt;
+    req.session.isAdmin = user.isAdmin;
     // send api response
     return res
       .status(200)
@@ -313,6 +315,7 @@ exports.login = async (req, res) => {
     req.session.name = user.name;
     req.session.verified = user.verified;
     req.session.created_at = user.createdAt;
+    req.session.isAdmin = user.isAdmin;
     // if remember me is selected/sent change the session to expire in 3 months rather then 12 hours
     if (remember == "on")
       req.session.cookie.originalMaxAge = 90 * 24 * 60 * 60 * 1000;

@@ -15,6 +15,8 @@ const userController = require("./controllers/userController");
 const accountController = require("./controllers/accountController");
 const transactionController = require("./controllers/transactionController");
 const visualizationsController = require("./controllers/visualizationsController");
+const adminController = require("./controllers/adminController");
+const adminViewController = require("./controllers/adminViewController");
 // enable sentry logging for production only
 if ((NODE_ENV = "production")) app.use(sentry.Handlers.requestHandler());
 // hide express is running from scrapers
@@ -33,7 +35,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(init.jsonParseHandler);
 // static assets
 app.use(express.static(__dirname + "/public"));
-// setup session for 12 hours
+// setup sessions to last for 12 hours
 app.use(
   session({
     secret: process.env.SALT,
@@ -87,6 +89,25 @@ app.post("/transactions/new", transactionController.create);
 // summary
 app.get("/summary/transactions", visualizationsController.transactions);
 app.get("/summary/accounts", visualizationsController.accounts);
+// admin
+app.get("/admin", adminViewController.dashboard);
+app.get("/admin/transactions", adminViewController.transactions);
+app.get("/admin/accounts", adminViewController.accounts);
+app.get("/admin/users", adminViewController.users);
+app.get(
+  "/admin/transactions/delete/:transaction_id",
+  adminController.deleteTransaction
+);
+// handle errors
+app.use(function (err, req, res, next) {
+  console.error(err.stack);
+  res.status(500).json({
+    success: false,
+    message: "Server side error!",
+    type: "SERVER_SIDE_ERROR",
+  });
+});
+
 // bind to port and run functions
 app.listen(PORT || 5000, IP || "0.0.0.0", () => {
   init.logging();

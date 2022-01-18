@@ -1,0 +1,33 @@
+<script>
+    new Chart(document.getElementById("totalTransactionsForYear"), {
+      type: "line",
+      data: {
+        labels: [<%= Object.keys(totalTransactionsForYear) %>],
+        datasets: [
+          {
+            label: "Transactions",
+            borderColor: 'rgb(75, 192, 192)',
+            data:[<%= Object.values(totalTransactionsForYear) %>],
+          },
+        ],
+      },
+      options: {
+        legend: { display: false },
+        title: {
+          display: true,
+          text: "Total Transactions per Year",
+        },
+        scales: {
+          yAxes: [{
+            scaleLabel: {
+              display: true,
+              labelString: 'Transactions made'
+            },
+            ticks: {
+             beginAtZero: true
+            },
+          }]
+        }
+      },
+    });
+ </script>

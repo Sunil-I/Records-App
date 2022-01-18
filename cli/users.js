@@ -25,6 +25,7 @@ async function main() {
     user_id: nanoid(),
     name: name,
     email: email,
+    isAdmin: false,
     password: bcrypt.hashSync(
       password,
       process.env.SALT ||

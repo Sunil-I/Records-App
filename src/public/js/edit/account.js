@@ -22,11 +22,11 @@ $(document).ready(() => {
             $("#name-label")
               .text(`Account Name - ${err.message}`)
               .css("color", "red");
-          } else if (err.type == "accountno") {
+          } else if (err.type == "account number") {
             $("#accountno-label")
               .text(`Account Number - ${err.message}`)
               .css("color", "red");
-          } else if (err.type == "sortcode") {
+          } else if (err.type == "sort code") {
             $("#sortcode-label")
               .text(`Account Sort Code - ${err.message}`)
               .css("color", "red");

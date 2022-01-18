@@ -5,19 +5,20 @@
   "main": "index.js",
   "scripts": {
     "start": "NODE_ENV=production node .",
+    "debug": "node . --trace-sync-io",
     "lint": "prettier --write .",
     "test": "mocha tests/*"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Sunil-I/COM519-Assessment.git"
+    "url": "git+https://github.com/Sunil-I/Records-App.git"
   },
   "author": "Sunil Islam",
   "license": "UNLICENSED",
   "bugs": {
-    "url": "https://github.com/Sunil-I/COM519-Assessment/issues"
+    "url": "https://github.com/Sunil-I/Records-App/issues"
   },
-  "homepage": "https://github.com/Sunil-I/COM519-Assessment#readme",
+  "homepage": "https://github.com/Sunil-I/Records-App#readme",
   "dependencies": {
     "@sentry/node": "^6.13.3",
     "bcrypt": "^5.0.1",

@@ -55,7 +55,7 @@ exports.create = async (req, res) => {
     {
       name: "sort code",
       value: sortcode,
-      type: "numberLong",
+      type: "numberShort",
     },
     {
       name: "balance",
@@ -154,11 +154,6 @@ exports.updateAccount = async (req, res) => {
   // check input
   const validation_fields = Validation.validate([
     {
-      name: "account id",
-      value: account_id,
-      type: "number",
-    },
-    {
       name: "name",
       value: name,
       type: "name",
@@ -171,7 +166,7 @@ exports.updateAccount = async (req, res) => {
     {
       name: "sort code",
       value: sortcode,
-      type: "numberLong",
+      type: "numberShort",
     },
     {
       name: "balance",
