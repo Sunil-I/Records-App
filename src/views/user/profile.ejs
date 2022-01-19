@@ -23,10 +23,10 @@
     <%- include("../common/header"); -%>
 	<div class="container col-md-4 col-md-offset-4 form-card text-center">
 		<div>
-			<h2>Profile Details for <%- user.name -%></h2>
+			<h2>Details for <%- user.name -%></h2>
 		</div>
 		<div>
-				<table class="table table-hover text-center">
+				<table class="table text-center">
 					<tr>
 						<td>Name</td>
 						<td>
@@ -43,6 +43,12 @@
 						<td>Verified</td>
 						<td>
 							<%= user.verified %>
+						</td>
+					</tr>
+					<tr>
+						<td>Administrator</td>
+						<td>
+							<%= user.isAdmin%>
 						</td>
 					</tr>
 					<tr>
@@ -68,9 +74,13 @@
 							<a  href="/close" class="btn btn-danger btn-xs"><span class="glyphicon glyphicon-remove"></span> Close Account</a>
 						</td>
 						<td>
+							<a  href="/refresh" class="btn btn-secondary btn-xs"><span class="glyphicon glyphicon-refresh"></span> Refresh Session</a>
+						</td>
+						<td>
 							<a  href="/update" class="btn btn-primary btn-xs"><span class="glyphicon glyphicon-remove"></span> Update Details</a>
 						</td>
 					</tr>
+
 				</table>
 		</div>
 	</div>

@@ -18,7 +18,7 @@ exports.dashboard = async (req, res) => {
       user: req.session,
       message: "Only admins can view this page!",
     });
-  const transactions = await Transaction.find({}).limit(1500).lean();
+  const transactions = await Transaction.find({}).limit(40000).lean();
 
   // turn transactions into dates
   const dates = transactions.map((e) => new Date(e.transaction_date));
@@ -98,13 +98,13 @@ exports.transactions = async (req, res) => {
     transactions = await Transaction.find({ account_id: id })
       .skip(perPage * page - perPage)
       .limit(10)
-      .sort([["transaction_date", -1]]);
+      .sort([["transaction_date", 1]]);
     count = await Transaction.find({ account_id: id }).count();
   } else {
     transactions = await Transaction.find({})
       .skip(perPage * page - perPage)
       .limit(10)
-      .sort([["transaction_date", -1]]);
+      .sort([["transaction_date", 1]]);
     count = await Transaction.find({}).count();
   }
 
@@ -163,68 +163,66 @@ exports.accounts = async (req, res) => {
   });
 };
 
-
 exports.editAccount = async (req, res) => {
-    const { account_id } = req.params;
-    if (
-        typeof req.session.user_id === "undefined" ||
-        typeof req.session.user_id === "null"
-      )
-        return res.render("message", {
-          message: "Only authenticated users view this page!",
-          user: req.session,
-        });
-    
-      if (!req.session.isAdmin)
-        return res.render("message", {
-          user: req.session,
-          message: "Only admins can view this page!",
-        });
-
-    const query = await Account.findOne({
-      account_id: account_id,
-    });
-    if (!query)
-      return res.render("message", {
-        message: "This account does not exist!",
-        user: req.session,
-      });
-    return res.render("edit/admin/account", {
-      account: query,
+  const { account_id } = req.params;
+  if (
+    typeof req.session.user_id === "undefined" ||
+    typeof req.session.user_id === "null"
+  )
+    return res.render("message", {
+      message: "Only authenticated users view this page!",
       user: req.session,
     });
-  };
-  
-  exports.viewAccount = async (req, res) => {
-    const { account_id } = req.params;
-    if (
-        typeof req.session.user_id === "undefined" ||
-        typeof req.session.user_id === "null"
-      )
-        return res.render("message", {
-          message: "Only authenticated users view this page!",
-          user: req.session,
-        });
-    
-      if (!req.session.isAdmin)
-        return res.render("message", {
-          user: req.session,
-          message: "Only admins can view this page!",
-        });
-    const query = await Account.findOne({
-      account_id: account_id,
+
+  if (!req.session.isAdmin)
+    return res.render("message", {
+      user: req.session,
+      message: "Only admins can view this page!",
     });
-    if (!query)
-      return res.render("message", {
-        message: "This account does not exist!",
-        user: req.session,
-      });
-    return res.render("view/admin/account", {
-      account: query,
+
+  const query = await Account.findOne({
+    account_id: account_id,
+  });
+  if (!query)
+    return res.render("message", {
+      message: "This account does not exist!",
       user: req.session,
     });
-  };
+  return res.render("edit/admin/account", {
+    account: query,
+    user: req.session,
+  });
+};
 
+exports.viewAccount = async (req, res) => {
+  const { account_id } = req.params;
+  if (
+    typeof req.session.user_id === "undefined" ||
+    typeof req.session.user_id === "null"
+  )
+    return res.render("message", {
+      message: "Only authenticated users view this page!",
+      user: req.session,
+    });
+
+  if (!req.session.isAdmin)
+    return res.render("message", {
+      user: req.session,
+      message: "Only admins can view this page!",
+    });
+  const query = await Account.findOne({
+    account_id: account_id,
+  });
+  if (!query)
+    return res.render("message", {
+      message: "This account does not exist!",
+      user: req.session,
+    });
+  return res.render("view/admin/account", {
+    account: query,
+    user: req.session,
+  });
+};
 
 exports.users = async (req, res) => {
   let { page } = req.query;
@@ -266,5 +264,95 @@ exports.users = async (req, res) => {
     pages: numberOfPages,
     current: page,
     q: "",
+  });
+};
+
+exports.viewUser = async (req, res) => {
+  const { user_id } = req.params;
+  if (
+    typeof req.session.user_id === "undefined" ||
+    typeof req.session.user_id === "null"
+  )
+    return res.render("message", {
+      message: "Only authenticated users view this page!",
+      user: req.session,
+    });
+
+  if (!req.session.isAdmin)
+    return res.render("message", {
+      user: req.session,
+      message: "Only admins can view this page!",
+    });
+
+  const query = await User.findOne({
+    user_id: user_id,
+  });
+  if (!query)
+    return res.render("message", {
+      message: "This user does not exist!",
+      user: req.session,
+    });
+  return res.render("view/admin/user", {
+    user: query,
+  });
+};
+
+exports.editUser = async (req, res) => {
+  const { user_id } = req.params;
+  if (
+    typeof req.session.user_id === "undefined" ||
+    typeof req.session.user_id === "null"
+  )
+    return res.render("message", {
+      message: "Only authenticated users view this page!",
+      user: req.session,
+    });
+
+  if (!req.session.isAdmin)
+    return res.render("message", {
+      user: req.session,
+      message: "Only admins can view this page!",
+    });
+
+  const query = await User.findOne({
+    user_id: user_id,
+  });
+  if (!query)
+    return res.render("message", {
+      message: "This user does not exist!",
+      user: req.session,
+    });
+  return res.render("edit/admin/user", {
+    user: query,
+  });
+};
+
+exports.viewAccount = async (req, res) => {
+  const { account_id } = req.params;
+  if (
+    typeof req.session.user_id === "undefined" ||
+    typeof req.session.user_id === "null"
+  )
+    return res.render("message", {
+      message: "Only authenticated users view this page!",
+      user: req.session,
+    });
+
+  if (!req.session.isAdmin)
+    return res.render("message", {
+      user: req.session,
+      message: "Only admins can view this page!",
+    });
+  const query = await Account.findOne({
+    account_id: account_id,
+  });
+  if (!query)
+    return res.render("message", {
+      message: "This account does not exist!",
+      user: req.session,
+    });
+  return res.render("view/admin/account", {
+    account: query,
+    user: req.session,
   });
 };

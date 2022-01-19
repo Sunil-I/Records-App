@@ -90,7 +90,7 @@ exports.accounts = async (req, res) => {
   })
     .skip(perPage * page - perPage)
     .limit(10)
-    .sort([["account_id", 1]]);
+    .sort([["createdAt", 1]]);
   //.sort("id");
   // count number of accounts we have for user
   const count = await Account.find({
@@ -146,14 +146,14 @@ exports.profile = async (req, res) => {
   )
     return res.redirect("/login");
   const { user_id } = req.session;
-  const accounts = await Account.find({ user_id });
+  const accounts = await Account.find({ user_id }).lean();
   const transactions = await Transaction.find({
     account_id: accounts.map((c) => c.account_id),
-  });
+  }).count();
   return res.render("user/profile", {
     user: req.session,
     accounts: accounts.length,
-    transactions: transactions.length,
+    transactions: transactions,
   });
 };
 
@@ -234,7 +234,7 @@ exports.transactions = async (req, res) => {
   })
     .skip(perPage * page - perPage)
     .limit(10)
-    .sort([["transaction_date", -1]]);
+    .sort([["transaction_date", 1]]);
   // count number of transactions we have for user
   const count = await Transaction.find({
     user_id: user_id,

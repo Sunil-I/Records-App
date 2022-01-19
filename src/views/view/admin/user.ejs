@@ -7,48 +7,48 @@
          content="width=device-width initial-scale=1 shrink-to-fit=no"
          />
       <meta name="description" content="data-driven full-stack web-application" />
-      <title>View Account</title>
+      <title>View User</title>
       <!-- Bootstrap core CSS -->
       <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.1/dist/css/bootstrap.min.css">
        
    </head>
    <body>
-      <%- include('../common/header'); -%>
+      <%- include('../../common/header'); -%>
       <div class="container">
          <div class="row justify-content-md-center">
             <div class="col-">
                <form>
                   <div class="form-group">
-                     <label id="name-label" for="name">Account Name</label>
+                     <label id="name-label" for="name">Name</label>
                      <input
-                        value="<%= account.name %>"
+                        value="<%= user.name %>"
                         type="text"
                         class="form-control"
                         readonly
                         />
                   </div>
                   <div class="form-group">
-                     <label id="accountno-label" for="name">Account Number</label>
+                     <label id="email-label" for="name">Email</label>
                      <input
-                        value="<%= account.accountno %>"
+                        value="<%= user.email %>"
                         type="text"
                         class="form-control"
                         readonly
                         />
                   </div>
                   <div class="form-group">
-                     <label id="sortcode-label" for="name">Account Sort Code</label>
+                     <label id="admin-label" for="name">Administrator</label>
                      <input
-                        value="<%= account.sortcode%>"
+                        value="<%= user.isAdmin%>"
                         type="text"
                         class="form-control"
                         readonly
                         />
                   </div>
                   <div class="form-group">
-                     <label id="balance-label" for="balance">Account Balance</label>
+                     <label id="verified-label" for="verified">Verified</label>
                      <input
-                        value="<%= account.balance %>"
+                        value="<%= user.verified %>"
                         type="text"
                         class="form-control"
                         readonly
@@ -56,16 +56,16 @@
                   </div>
                   <tr>
                     <td>
-                        <a  href="/accounts/" class="btn btn-primary btn-xs"><span class="glyphicon glyphicon-remove"></span> Go back</a>
+                        <a  href="/admin/users/" class="btn btn-primary btn-xs"><span class="glyphicon glyphicon-remove"></span> Go back</a>
                     </td>
                     <td>
-                        <a  href="/accounts/edit/<%= account.account_id%>" class="btn btn-dark btn-xs"><span class="glyphicon glyphicon-remove"></span> Edit Account</a>
+                        <a  href="/admin/users/edit/<%= user.user_id %>" class="btn btn-dark btn-xs"><span class="glyphicon glyphicon-remove"></span> Edit User</a>
                     </td>
                 </tr>
                </form>
             </div>
          </div>
       </div>
-      <%- include('../common/footer'); -%>
+      <%- include('../../common/footer'); -%>
    </body>
 </html>

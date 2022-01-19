@@ -64,6 +64,7 @@ app.post("/update", userController.update);
 app.get("/logout", userController.logout);
 // profile
 app.get("/profile", viewController.profile);
+app.get("/refresh", userController.refresh);
 // forget password
 app.get("/forgot-password", viewController.forget);
 app.post("/forget-password", userController.findResetEmail);
@@ -91,15 +92,25 @@ app.get("/summary/transactions", visualizationsController.transactions);
 app.get("/summary/accounts", visualizationsController.accounts);
 // admin
 app.get("/admin", adminViewController.dashboard);
+// admin transactions
 app.get("/admin/transactions", adminViewController.transactions);
-app.get("/admin/accounts", adminViewController.accounts);
-app.get("/admin/accounts/view/:account_id", adminViewController.viewAccount);
-app.get("/admin/accounts/edit/:account_id", adminViewController.editAccount);
-app.get("/admin/users", adminViewController.users);
 app.get(
   "/admin/transactions/delete/:transaction_id",
   adminController.deleteTransaction
 );
+// admin accounts
+app.get("/admin/accounts", adminViewController.accounts);
+app.get("/admin/accounts/view/:account_id", adminViewController.viewAccount);
+app.get("/admin/accounts/edit/:account_id", adminViewController.editAccount);
+app.get("/admin/accounts/delete/:account_id", adminController.deleteAccount);
+app.post("/admin/accounts/edit", adminController.editAccount);
+// admin users
+app.get("/admin/users", adminViewController.users);
+app.get("/admin/users/view/:user_id", adminViewController.viewUser);
+app.get("/admin/users/edit/:user_id", adminViewController.editUser);
+app.get("/admin/users/delete/:user_id", adminController.deleteUser);
+app.post("/admin/users/edit", adminController.updateUser);
+
 // handle errors
 app.use(function (err, req, res, next) {
   console.error(err.stack);

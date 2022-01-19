@@ -17,6 +17,20 @@ exports.logout = (req, res) => {
   res.redirect("/");
 };
 
+// refresh session
+exports.refresh = async (req, res) => {
+  const { user_id } = req.session;
+
+  const user = await User.findOne({ user_id });
+
+  req.session.email = user.email;
+  req.session.name = user.name;
+  req.session.verified = user.verified;
+  req.session.created_at = user.createdAt;
+  req.session.isAdmin = user.isAdmin;
+
+  return res.redirect("/profile");
+};
 // create user
 exports.create = async (req, res) => {
   try {
