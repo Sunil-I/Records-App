@@ -371,13 +371,13 @@ exports.manage = async (req, res) => {
       user: req.session,
       message: "Only admins can view this page!",
     });
-    const transactions = await Transaction.find({}).lean()
-    const accounts = await Account.find({}).lean()
-    const users = await User.find({}).lean()
-    return res.render("admin/manage", {
+  const transactions = await Transaction.find({}).lean();
+  const accounts = await Account.find({}).lean();
+  const users = await User.find({}).lean();
+  return res.render("admin/manage", {
     user: req.session,
     transactions: transactions,
     accounts: accounts,
-    users: users
+    users: users,
   });
 };

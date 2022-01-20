@@ -290,3 +290,73 @@ exports.updateUser = async (req, res) => {
     .status(200)
     .json({ success: true, message: "Updated user details." });
 };
+
+exports.wipeTransactions = async (req, res) => {
+  // if not logged in
+  if (
+    typeof req.session.user_id === "undefined" ||
+    typeof req.session.user_id === "null"
+  )
+    return res.render("message", {
+      user: req.session,
+      message: "Only authenticated users can wipe transactions!",
+    });
+
+  if (!req.session.isAdmin)
+    return res.render("message", {
+      user: req.session,
+      message: "You do not have permission to delete wipe transactions",
+    });
+
+  await Transaction.deleteMany({});
+  // redirect
+  return res.redirect("/admin/manage");
+};
+
+exports.wipeAccounts = async (req, res) => {
+  // if not logged in
+  if (
+    typeof req.session.user_id === "undefined" ||
+    typeof req.session.user_id === "null"
+  )
+    return res.render("message", {
+      user: req.session,
+      message: "Only authenticated users can wipe accounts!",
+    });
+
+  if (!req.session.isAdmin)
+    return res.render("message", {
+      user: req.session,
+      message: "You do not have permission to wipe accounts!",
+    });
+
+  await Account.deleteMany({});
+  await Transaction.deleteMany({});
+  // redirect
+  return res.redirect("/admin/manage");
+};
+
+exports.wipeUsers = async (req, res) => {
+  // if not logged in
+  if (
+    typeof req.session.user_id === "undefined" ||
+    typeof req.session.user_id === "null"
+  )
+    return res.render("message", {
+      user: req.session,
+      message: "Only authenticated users can wipe users!",
+    });
+
+  if (!req.session.isAdmin)
+    return res.render("message", {
+      user: req.session,
+      message: "You do not have permission to wipe users!",
+    });
+
+  await User.deleteMany({});
+  await Account.deleteMany({});
+  await Transaction.deleteMany({});
+  // redirect
+  req.session.destroy()
+  return res.redirect("/admin/manage");
+};

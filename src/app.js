@@ -111,7 +111,10 @@ app.get("/admin/users/edit/:user_id", adminViewController.editUser);
 app.get("/admin/users/delete/:user_id", adminController.deleteUser);
 app.post("/admin/users/edit", adminController.updateUser);
 // admin data
-app.get("/admin/manage", adminViewController.manage)
+app.get("/admin/manage", adminViewController.manage);
+app.get("/admin/data/delete/accounts", adminController.wipeAccounts);
+app.get("/admin/data/delete/transactions", adminController.wipeTransactions);
+app.get("/admin/data/delete/users", adminController.wipeUsers);
 // handle errors
 app.use(function (err, req, res, next) {
   console.error(err.stack);
