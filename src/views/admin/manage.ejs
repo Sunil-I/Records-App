@@ -93,6 +93,7 @@
                          <td><%= users.length %></td>
                          <td>
                             <span class="inline-flex"><a href="/admin/data/export/users"><button class="btn btn-sm btn-primary">Export</button></a></span>
+                            <span class="inline-flex"><a href="/admin/data/generate/users"><button class="btn btn-sm btn-secondary">Generate</button></a></span>
                             <span class="inline-flex"><a href="/admin/data/delete/users"><button class="btn btn-sm btn-danger">Delete</button></a></span>
                           </td>
                      </tr>
@@ -101,6 +102,7 @@
                         <td><%= transactions.length %></td>
                         <td>
                             <span class="inline-flex"><a href="/admin/data/export/transactions"><button class="btn btn-sm btn-primary">Export</button></a></span>
+                            <span class="inline-flex"><a href="/admin/data/generate/transactions"><button class="btn btn-sm btn-secondary">Generate</button></a></span>
                             <span class="inline-flex"><a href="/admin/data/delete/transactions"><button class="btn btn-sm btn-danger">Delete</button></a></span>
                          </td>
                     </tr>
@@ -109,9 +111,19 @@
                         <td><%= accounts.length %></td>
                         <td>
                            <span class="inline-flex"><a href="/admin/data/export/accounts"><button class="btn btn-sm btn-primary">Export</button></a></span>
+                           <span class="inline-flex"><a href="/admin/data/generate/accounts"><button class="btn btn-sm btn-secondary">Generate</button></a></span>
                            <span class="inline-flex"><a href="/admin/data/delete/accounts"><button class="btn btn-sm btn-danger">Delete</button></a></span>
                         </td>
                     </tr>
+                    <tr>
+                     <td>Sessions</td>
+                     <td><%= sessions.length %></td>
+                     <td>
+                        <span class="inline-flex"><a href="/admin/data/export/sessions"><button class="btn btn-sm btn-primary">Export</button></a></span>
+                        <span class="inline-flex"><button class="btn btn-sm btn-secondary disabled">Generate</button></span>
+                        <span class="inline-flex"><a href="/admin/data/delete/sessions"><button class="btn btn-sm btn-danger">Delete</button></a></span>
+                     </td>
+                 </tr>
                   </thead>
                </table>
             </main>

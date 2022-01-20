@@ -112,9 +112,22 @@ app.get("/admin/users/delete/:user_id", adminController.deleteUser);
 app.post("/admin/users/edit", adminController.updateUser);
 // admin data
 app.get("/admin/manage", adminViewController.manage);
-app.get("/admin/data/delete/accounts", adminController.wipeAccounts);
-app.get("/admin/data/delete/transactions", adminController.wipeTransactions);
+// delete
 app.get("/admin/data/delete/users", adminController.wipeUsers);
+app.get("/admin/data/delete/transactions", adminController.wipeTransactions);
+app.get("/admin/data/delete/accounts", adminController.wipeAccounts);
+// export
+app.get("/admin/data/export/users", adminController.exportUsers);
+app.get("/admin/data/export/transactions", adminController.exportTransactions);
+app.get("/admin/data/export/accounts", adminController.exportAccounts);
+app.get("/admin/data/export/sessions", adminController.exportSessions);
+// generate
+app.get("/admin/data/generate/users", adminController.generateUsers);
+app.get(
+  "/admin/data/generate/transactions",
+  adminController.generateTransactions
+);
+app.get("/admin/data/generate/accounts", adminController.generateAccounts);
 // handle errors
 app.use(function (err, req, res, next) {
   console.error(err.stack);

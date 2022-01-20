@@ -1,7 +1,6 @@
 const init = require("../lib/Initialization");
 const Account = require("../lib/models/Account");
 const faker = require("faker");
-const { database } = require("faker/locale/de_CH");
 const { customAlphabet } = require("nanoid");
 const nanoid = customAlphabet("1234567890abcdefghijklmnopqrstuvwxyz", 10);
 require("dotenv").config({
@@ -47,5 +46,5 @@ init.db().then(async () => {
         `[Runner] Sucessfully Inserted ${r.length} accounts to the database.`
       )
     )
-    .then(() => process.exit(1));
+    .then(() => process.exit(0));
 });

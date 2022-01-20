@@ -85,6 +85,6 @@ init.db().then(async () => {
     )
     .then(() => {
       query.balance = account_balance;
-      query.save().then(() => process.exit(1));
+      query.save().then(() => process.exit(0));
     });
 });

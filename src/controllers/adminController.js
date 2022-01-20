@@ -1,7 +1,13 @@
 const Transaction = require("../../lib/models/Transaction");
 const Account = require("../../lib/models/Account");
 const User = require("../../lib/models/User");
+const Session = require("../../lib/models/Session");
 const Validation = require("../../lib/Validation");
+const fs = require("fs");
+const path = require("path");
+const faker = require("faker");
+const { customAlphabet } = require("nanoid");
+const nanoid = customAlphabet("1234567890abcdefghijklmnopqrstuvwxyz", 10);
 
 // Delete transaction -> Delete user -> Delete account -> Edit account -> Edit User
 exports.deleteTransaction = async (req, res) => {
@@ -305,7 +311,7 @@ exports.wipeTransactions = async (req, res) => {
   if (!req.session.isAdmin)
     return res.render("message", {
       user: req.session,
-      message: "You do not have permission to delete wipe transactions",
+      message: "You do not have permission to wipe transactions",
     });
 
   await Transaction.deleteMany({});
@@ -356,7 +362,204 @@ exports.wipeUsers = async (req, res) => {
   await User.deleteMany({});
   await Account.deleteMany({});
   await Transaction.deleteMany({});
+  await Session.deleteMany({});
   // redirect
-  req.session.destroy()
+  return res.redirect("/admin/manage");
+};
+
+exports.wipeSession = async (req, res) => {
+  // if not logged in
+  if (
+    typeof req.session.user_id === "undefined" ||
+    typeof req.session.user_id === "null"
+  )
+    return res.render("message", {
+      user: req.session,
+      message: "Only authenticated users can wipe sessions!",
+    });
+
+  if (!req.session.isAdmin)
+    return res.render("message", {
+      user: req.session,
+      message: "You do not have permission to wipe sessions!",
+    });
+
+  await Session.deleteMany({});
+  // redirect
+  return res.redirect("/admin/manage");
+};
+
+exports.exportUsers = async (req, res) => {
+  // if not logged in
+  if (
+    typeof req.session.user_id === "undefined" ||
+    typeof req.session.user_id === "null"
+  )
+    return res.render("message", {
+      user: req.session,
+      message: "Only authenticated users can export users!",
+    });
+
+  if (!req.session.isAdmin)
+    return res.render("message", {
+      user: req.session,
+      message: "You do not have permission to export users!",
+    });
+
+  const users = await User.find({}).lean();
+
+  const file_name = `users-export-${Date.now()}.json`;
+  const file_path = path.join(__dirname, "..", "..", file_name);
+  fs.writeFileSync(file_path, JSON.stringify(users));
+  res.setHeader("Content-disposition", `attachment; filename=${file_name}`);
+  res.sendFile(file_path, function (err) {
+    if (err) {
+      next(err);
+    } else {
+      fs.unlink(file_name, () => {});
+    }
+  });
+};
+
+exports.exportTransactions = async (req, res) => {
+  // if not logged in
+  if (
+    typeof req.session.user_id === "undefined" ||
+    typeof req.session.user_id === "null"
+  )
+    return res.render("message", {
+      user: req.session,
+      message: "Only authenticated users can export transactions!",
+    });
+
+  if (!req.session.isAdmin)
+    return res.render("message", {
+      user: req.session,
+      message: "You do not have permission to export transactions!",
+    });
+
+  const transactions = await Transaction.find({}).lean();
+
+  const file_name = `transactions-export-${Date.now()}.json`;
+  const file_path = path.join(__dirname, "..", "..", file_name);
+  fs.writeFileSync(file_path, JSON.stringify(transactions));
+  res.setHeader("Content-disposition", `attachment; filename=${file_name}`);
+  res.sendFile(file_path, function (err) {
+    if (err) {
+      next(err);
+    } else {
+      fs.unlink(file_name, () => {});
+    }
+  });
+};
+exports.exportAccounts = async (req, res) => {
+  // if not logged in
+  if (
+    typeof req.session.user_id === "undefined" ||
+    typeof req.session.user_id === "null"
+  )
+    return res.render("message", {
+      user: req.session,
+      message: "Only authenticated users can export accounts!",
+    });
+
+  if (!req.session.isAdmin)
+    return res.render("message", {
+      user: req.session,
+      message: "You do not have permission to wipe accounts!",
+    });
+
+  const accounts = await Account.find({}).lean();
+
+  const file_name = `accounts-export-${Date.now()}.json`;
+  const file_path = path.join(__dirname, "..", "..", file_name);
+  fs.writeFileSync(file_path, JSON.stringify(accounts));
+  res.setHeader("Content-disposition", `attachment; filename=${file_name}`);
+  res.sendFile(file_path, function (err) {
+    if (err) {
+      next(err);
+    } else {
+      fs.unlink(file_name, () => {});
+    }
+  });
+};
+
+exports.exportSessions = async (req, res) => {
+  // if not logged in
+  if (
+    typeof req.session.user_id === "undefined" ||
+    typeof req.session.user_id === "null"
+  )
+    return res.render("message", {
+      user: req.session,
+      message: "Only authenticated users can export sessions!",
+    });
+
+  if (!req.session.isAdmin)
+    return res.render("message", {
+      user: req.session,
+      message: "You do not have permission to export sessions!",
+    });
+
+  const sessions = await Session.find({}).lean();
+
+  const file_name = `sessions-export-${Date.now()}.json`;
+  const file_path = path.join(__dirname, "..", "..", file_name);
+  fs.writeFileSync(file_path, JSON.stringify(sessions));
+  res.setHeader("Content-disposition", `attachment; filename=${file_name}`);
+  res.sendFile(file_path, function (err) {
+    if (err) {
+      next(err);
+    } else {
+      fs.unlink(file_name, () => {});
+    }
+  });
+};
+
+exports.generateAccounts = async (req, res) => {
+  const { execSync } = require("child_process");
+  const env =
+    process.env.NODE_ENV === "production" ? "production" : "development";
+  const command = "NODE_ENV=" + env + " node cli/multiAccounts.js 10";
+  console.log("Executing command " + command);
+  execSync(command, (error) => {
+    if (error) {
+      console.error(`error: ${error.message}`);
+      console._error(error);
+      return;
+    }
+  });
+  return res.redirect("/admin/manage");
+};
+
+exports.generateUsers = async (req, res) => {
+  const { execSync } = require("child_process");
+  const env =
+    process.env.NODE_ENV === "production" ? "production" : "development";
+  const command = "NODE_ENV=" + env + " node cli/users.js 10";
+  console.log("Executing command " + command);
+  execSync(command, (error) => {
+    if (error) {
+      console.error(`error: ${error.message}`);
+      console._error(error);
+      return;
+    }
+  });
+  return res.redirect("/admin/manage");
+};
+
+exports.generateTransactions = async (req, res) => {
+  const { execSync } = require("child_process");
+  const env =
+    process.env.NODE_ENV === "production" ? "production" : "development";
+  const command = "NODE_ENV=" + env + " node cli/multiTransactions.js 5";
+  console.log("Executing command " + command);
+  execSync(command, (error) => {
+    if (error) {
+      console.error(`error: ${error.message}`);
+      console._error(error);
+      return;
+    }
+  });
   return res.redirect("/admin/manage");
 };

@@ -54,5 +54,5 @@ init.db().then(async () => {
         `[Runner] Sucessfully inserted ${r.length} users to the database.`
       )
     )
-    .then(() => process.exit(1));
+    .then(() => process.exit(0));
 });

@@ -78,5 +78,5 @@ init.db().then(async () => {
       (r) =>
         `[Runner] Sucessfully Inserted ${r.length} transactions to the database.`
     )
-    .then(() => process.exit(1));
+    .then(() => process.exit(0));
 });

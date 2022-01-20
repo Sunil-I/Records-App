@@ -1,7 +1,7 @@
 const Transaction = require("../../lib/models/Transaction");
 const Account = require("../../lib/models/Account");
 const User = require("../../lib/models/User");
-
+const Session = require("../../lib/models/Session");
 // Dashboard view -> Transactions view -> Accounts view -> View Account -> Edit Account -> Users view -> Manage view
 
 exports.dashboard = async (req, res) => {
@@ -374,10 +374,12 @@ exports.manage = async (req, res) => {
   const transactions = await Transaction.find({}).lean();
   const accounts = await Account.find({}).lean();
   const users = await User.find({}).lean();
+  const sessions = await Session.find({}).lean();
   return res.render("admin/manage", {
     user: req.session,
     transactions: transactions,
     accounts: accounts,
     users: users,
+    sessions: sessions,
   });
 };
