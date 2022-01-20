@@ -110,7 +110,8 @@ app.get("/admin/users/view/:user_id", adminViewController.viewUser);
 app.get("/admin/users/edit/:user_id", adminViewController.editUser);
 app.get("/admin/users/delete/:user_id", adminController.deleteUser);
 app.post("/admin/users/edit", adminController.updateUser);
-
+// admin data
+app.get("/admin/manage", adminViewController.manage)
 // handle errors
 app.use(function (err, req, res, next) {
   console.error(err.stack);

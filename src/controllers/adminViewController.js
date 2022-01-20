@@ -2,7 +2,7 @@ const Transaction = require("../../lib/models/Transaction");
 const Account = require("../../lib/models/Account");
 const User = require("../../lib/models/User");
 
-// Dashboard view -> Transactions view -> Accounts view -> View Account -> Edit Account -> Users view
+// Dashboard view -> Transactions view -> Accounts view -> View Account -> Edit Account -> Users view -> Manage view
 
 exports.dashboard = async (req, res) => {
   if (
@@ -354,5 +354,30 @@ exports.viewAccount = async (req, res) => {
   return res.render("view/admin/account", {
     account: query,
     user: req.session,
+  });
+};
+
+exports.manage = async (req, res) => {
+  if (
+    typeof req.session.user_id === "undefined" ||
+    typeof req.session.user_id === "null"
+  )
+    return res.render("message", {
+      message: "Only authenticated users can view this page!",
+      user: req.session,
+    });
+  if (!req.session.isAdmin)
+    return res.render("message", {
+      user: req.session,
+      message: "Only admins can view this page!",
+    });
+    const transactions = await Transaction.find({}).lean()
+    const accounts = await Account.find({}).lean()
+    const users = await User.find({}).lean()
+    return res.render("admin/manage", {
+    user: req.session,
+    transactions: transactions,
+    accounts: accounts,
+    users: users
   });
 };
