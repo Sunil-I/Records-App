@@ -128,6 +128,8 @@ app.get(
   adminController.generateTransactions
 );
 app.get("/admin/data/generate/accounts", adminController.generateAccounts);
+// logs
+app.get("/admin/logs", adminViewController.logs);
 // handle errors
 app.use(function (err, req, res, next) {
   console.error(err.stack);

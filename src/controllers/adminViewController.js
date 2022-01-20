@@ -2,6 +2,7 @@ const Transaction = require("../../lib/models/Transaction");
 const Account = require("../../lib/models/Account");
 const User = require("../../lib/models/User");
 const Session = require("../../lib/models/Session");
+const Log = require("../../lib/models/Log");
 // Dashboard view -> Transactions view -> Accounts view -> View Account -> Edit Account -> Users view -> Manage view
 
 exports.dashboard = async (req, res) => {
@@ -381,5 +382,48 @@ exports.manage = async (req, res) => {
     accounts: accounts,
     users: users,
     sessions: sessions,
+  });
+};
+
+exports.logs = async (req, res) => {
+  let { page } = req.query;
+  if (
+    typeof req.session.user_id === "undefined" ||
+    typeof req.session.user_id === "null"
+  )
+    return res.render("message", {
+      message: "Only authenticated users view this page!",
+      user: req.session,
+    });
+
+  if (!req.session.isAdmin)
+    return res.render("message", {
+      user: req.session,
+      message: "Only admins can view this page!",
+    });
+
+  // 10 results per page
+  const perPage = 10;
+  // parse page input and remove anything thats not a number
+  if (page) page = parseInt(page.toString().replace(/[^0-9]/g, ""));
+  // checks for page num and how many results
+  if (!page) page = 1;
+  // find data
+  const logs = await Log.find({})
+    .skip(perPage * page - perPage)
+    .limit(10)
+    .sort([["createdAt", -1]]);
+  //.sort("id");
+  // count number of accounts we have for user
+  const count = await Log.find({}).count();
+  // calculate number of pages needed
+  const numberOfPages = Math.ceil(count / perPage);
+  // render page
+  return res.render("admin/logs", {
+    user: req.session,
+    logs: logs,
+    pages: numberOfPages,
+    current: page,
+    q: "",
   });
 };

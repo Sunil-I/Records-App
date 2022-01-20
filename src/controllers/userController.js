@@ -2,6 +2,7 @@
 const User = require("../../lib/models/User");
 const Account = require("../../lib/models/Account");
 const Transaction = require("../../lib/models/Transaction");
+const Log = require("../../lib/models/Log");
 // packages
 const bcrypt = require("bcrypt");
 const nodemailer = require("nodemailer");
@@ -317,6 +318,14 @@ exports.login = async (req, res) => {
     // check if password is correct
     const validPass = await bcrypt.compare(password, user.password);
     if (!validPass) {
+      const log = new Log({
+        log_id: nanoid(),
+        user_id: user.user_id,
+        user_email: user.email,
+        status: "fail",
+        reason: "incorrect password.",
+      });
+      await log.save();
       return res.status(401).send({
         success: false,
         message: "The password you entered is not correct.",
@@ -331,8 +340,17 @@ exports.login = async (req, res) => {
     req.session.created_at = user.createdAt;
     req.session.isAdmin = user.isAdmin;
     // if remember me is selected/sent change the session to expire in 3 months rather then 12 hours
-    if (remember == "on")
+    if (remember == "on") {
       req.session.cookie.originalMaxAge = 90 * 24 * 60 * 60 * 1000;
+    }
+    const log = new Log({
+      log_id: nanoid(),
+      user_id: user.user_id,
+      user_email: user.email,
+      status: "success",
+      reason: "successful login",
+    });
+    await log.save();
     return res
       .status(200)
       .send({ success: true, message: "Login Successful." });
