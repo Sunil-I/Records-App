@@ -2,6 +2,7 @@ const Transaction = require("../../lib/models/Transaction");
 const Account = require("../../lib/models/Account");
 const User = require("../../lib/models/User");
 const Session = require("../../lib/models/Session");
+const Log = require("../../lib/models/Log");
 const Validation = require("../../lib/Validation");
 const fs = require("fs");
 const path = require("path");
@@ -27,9 +28,7 @@ exports.deleteTransaction = async (req, res) => {
       message: "You do not have permission to delete this transaction",
     });
 
-  // define variables
   const { transaction_id } = req.params;
-  // get transaction first
   const transaction = await Transaction.findOne({ transaction_id });
   if (!transaction)
     return res.render("message", {
@@ -75,6 +74,7 @@ exports.deleteUser = async (req, res) => {
   await Account.deleteMany({ user_id });
   // delete the user
   await User.deleteOne({ _id: user._id });
+  if (user.id == req.session.user_id) await req.session.destroy();
   // redirect
   return res.redirect("/admin/users");
 };
@@ -363,11 +363,12 @@ exports.wipeUsers = async (req, res) => {
   await Account.deleteMany({});
   await Transaction.deleteMany({});
   await Session.deleteMany({});
+  await req.session.destroy();
   // redirect
   return res.redirect("/admin/manage");
 };
 
-exports.wipeSession = async (req, res) => {
+exports.wipeSessions = async (req, res) => {
   // if not logged in
   if (
     typeof req.session.user_id === "undefined" ||
@@ -385,6 +386,28 @@ exports.wipeSession = async (req, res) => {
     });
 
   await Session.deleteMany({});
+  // redirect
+  return res.redirect("/admin/manage");
+};
+
+exports.wipeLogs = async (req, res) => {
+  // if not logged in
+  if (
+    typeof req.session.user_id === "undefined" ||
+    typeof req.session.user_id === "null"
+  )
+    return res.render("message", {
+      user: req.session,
+      message: "Only authenticated users can wipe logs!",
+    });
+
+  if (!req.session.isAdmin)
+    return res.render("message", {
+      user: req.session,
+      message: "You do not have permission to wipe logs!",
+    });
+
+  await Log.deleteMany({});
   // redirect
   return res.redirect("/admin/manage");
 };
@@ -506,6 +529,38 @@ exports.exportSessions = async (req, res) => {
   const file_name = `sessions-export-${Date.now()}.json`;
   const file_path = path.join(__dirname, "..", "..", file_name);
   fs.writeFileSync(file_path, JSON.stringify(sessions));
+  res.setHeader("Content-disposition", `attachment; filename=${file_name}`);
+  res.sendFile(file_path, function (err) {
+    if (err) {
+      next(err);
+    } else {
+      fs.unlink(file_name, () => {});
+    }
+  });
+};
+
+exports.exportLogs = async (req, res) => {
+  // if not logged in
+  if (
+    typeof req.session.user_id === "undefined" ||
+    typeof req.session.user_id === "null"
+  )
+    return res.render("message", {
+      user: req.session,
+      message: "Only authenticated users can export logs!",
+    });
+
+  if (!req.session.isAdmin)
+    return res.render("message", {
+      user: req.session,
+      message: "You do not have permission to export logs!",
+    });
+
+  const logs = await Log.find({}).lean();
+
+  const file_name = `logs-export-${Date.now()}.json`;
+  const file_path = path.join(__dirname, "..", "..", file_name);
+  fs.writeFileSync(file_path, JSON.stringify(logs));
   res.setHeader("Content-disposition", `attachment; filename=${file_name}`);
   res.sendFile(file_path, function (err) {
     if (err) {

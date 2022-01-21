@@ -124,6 +124,15 @@
                         <span class="inline-flex"><a href="/admin/data/delete/sessions"><button class="btn btn-sm btn-danger">Delete</button></a></span>
                      </td>
                  </tr>
+                 <tr>
+                  <td>Logs</td>
+                  <td><%= logs.length %></td>
+                  <td>
+                     <span class="inline-flex"><a href="/admin/data/export/logs"><button class="btn btn-sm btn-primary">Export</button></a></span>
+                     <span class="inline-flex"><button class="btn btn-sm btn-secondary disabled">Generate</button></span>
+                     <span class="inline-flex"><a href="/admin/data/delete/logs"><button class="btn btn-sm btn-danger">Delete</button></a></span>
+                  </td>
+              </tr>
                   </thead>
                </table>
             </main>

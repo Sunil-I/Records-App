@@ -1,15 +1,11 @@
 const express = require("express");
 const app = express();
-// define sentry package
 const sentry = require("@sentry/node");
-// define session packages
 const session = require("express-session");
 const MongoStore = require("connect-mongo");
-// define environment values
+const start = require("../lib/Initialization");
 const { PORT, BASE_URL, IP } = process.env;
-// initialization functions
-const init = require("../lib/Initialization");
-// define controllers
+
 const viewController = require("./controllers/viewController");
 const userController = require("./controllers/userController");
 const accountController = require("./controllers/accountController");
@@ -17,22 +13,20 @@ const transactionController = require("./controllers/transactionController");
 const visualizationsController = require("./controllers/visualizationsController");
 const adminController = require("./controllers/adminController");
 const adminViewController = require("./controllers/adminViewController");
-// enable sentry logging for production only
+
+// only use sentry for request handling in production
 if ((NODE_ENV = "production")) app.use(sentry.Handlers.requestHandler());
-// hide express is running from scrapers
-app.use((req, res, next) => {
-  res.setHeader("X-Powered-By", "<3");
-  next();
-});
+// protect app from common scrapers
+app.disable("x-powered-by");
 // set view engine
 app.set("view engine", "ejs");
 app.set("views", __dirname + "/views");
 
-// allow the use of req.body with JSON post + html forms
+// allows express to recieve JSON and HTML form data via req.body
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 // handle invalid JSON
-app.use(init.jsonParseHandler);
+app.use(start.jsonParseHandler);
 // static assets
 app.use(express.static(__dirname + "/public"));
 // setup sessions to last for 12 hours
@@ -116,11 +110,14 @@ app.get("/admin/manage", adminViewController.manage);
 app.get("/admin/data/delete/users", adminController.wipeUsers);
 app.get("/admin/data/delete/transactions", adminController.wipeTransactions);
 app.get("/admin/data/delete/accounts", adminController.wipeAccounts);
+app.get("/admin/data/delete/sessions", adminController.wipeSessions);
+app.get("/admin/data/delete/logs", adminController.wipeLogs);
 // export
 app.get("/admin/data/export/users", adminController.exportUsers);
 app.get("/admin/data/export/transactions", adminController.exportTransactions);
 app.get("/admin/data/export/accounts", adminController.exportAccounts);
 app.get("/admin/data/export/sessions", adminController.exportSessions);
+app.get("/admin/data/export/logs", adminController.exportLogs);
 // generate
 app.get("/admin/data/generate/users", adminController.generateUsers);
 app.get(
@@ -135,15 +132,15 @@ app.use(function (err, req, res, next) {
   console.error(err.stack);
   res.status(500).json({
     success: false,
-    message: "Server side error!",
+    message: "Unknown error!",
     type: "SERVER_SIDE_ERROR",
   });
 });
 
 // bind to port and run functions
 app.listen(PORT || 5000, IP || "0.0.0.0", () => {
-  init.logging();
-  init.db();
-  init.sentry();
+  start.logging();
+  start.db();
+  start.sentry();
   console.log(`Express server started at ${BASE_URL}`);
 });

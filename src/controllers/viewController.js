@@ -152,6 +152,7 @@ exports.profile = async (req, res) => {
   }).count();
   return res.render("user/profile", {
     user: req.session,
+    joined: new Date(req.session.created_at),
     accounts: accounts.length,
     transactions: transactions,
   });

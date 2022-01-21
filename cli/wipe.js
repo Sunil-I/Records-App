@@ -2,6 +2,8 @@ const init = require("../lib/Initialization");
 const User = require("../lib/models/User");
 const Account = require("../lib/models/Account");
 const Transaction = require("../lib/models/Transaction");
+const Session = require("../lib/models/Session");
+const Log = require("../lib/models/Log");
 require("dotenv").config({
   path: process.env.NODE_ENV === "production" ? ".env" : "dev.env",
 });
@@ -15,6 +17,8 @@ async function main() {
   await User.deleteMany({});
   await Account.deleteMany({});
   await Transaction.deleteMany({});
+  await Session.deleteMany({});
+  await Log.deleteMany({});
   return console.log("Wiped all data!");
 }
 

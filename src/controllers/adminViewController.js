@@ -376,12 +376,14 @@ exports.manage = async (req, res) => {
   const accounts = await Account.find({}).lean();
   const users = await User.find({}).lean();
   const sessions = await Session.find({}).lean();
+  const logs = await Log.find({}).lean();
   return res.render("admin/manage", {
     user: req.session,
     transactions: transactions,
     accounts: accounts,
     users: users,
     sessions: sessions,
+    logs: logs,
   });
 };
 
