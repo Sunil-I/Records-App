@@ -98,13 +98,14 @@ exports.create = async (req, res) => {
         message: "Please agree to the ToS.",
         type: "tos",
       });
-    // create user with a generated salt or make a random one with a unique user id
-    // handle edge case of user db being empty!
+    const count = await User.find({}).countDocuments();
+    let admin = false;
+    if (count == 0) admin = true;
     const user = new User({
       user_id: nanoid(),
       name: name,
       email: email,
-      isAdmin: false,
+      isAdmin: admin,
       password: await bcrypt.hash(
         password,
         process.env.SALT || (await bcrypt.genSalt(10))

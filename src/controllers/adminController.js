@@ -575,7 +575,7 @@ exports.generateAccounts = async (req, res) => {
   const { execSync } = require("child_process");
   const env =
     process.env.NODE_ENV === "production" ? "production" : "development";
-  const command = "NODE_ENV=" + env + " node cli/multiAccounts.js 10";
+  const command = "NODE_ENV=" + env + " node cli/multiAccounts.js 5";
   console.log("Executing command " + command);
   execSync(command, (error) => {
     if (error) {
